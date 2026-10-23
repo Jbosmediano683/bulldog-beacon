@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { api, fmtCost, fmtTokens, telHref, type Action, type ChatMessage } from "../api";
 import EscortSheet from "../components/EscortSheet";
-import { IconPhone, IconSend, IconShield, IconWalk } from "../icons";
+import { IconPhone, IconPlus, IconSend, IconShield, IconWalk } from "../icons";
 import { useApp } from "../state";
 
 /** Render the model's light markdown (**bold**, *italic*) without injecting HTML. */
@@ -72,6 +72,9 @@ export default function Chat() {
     else if (a.kind === "open_map") go("alerts", { incidentId: a.incident_id ?? undefined });
     else if (a.kind === "open_resources") go("resources");
     else if (a.kind === "request_escort") setEscort(a);
+    else if (a.kind === "post_alert") go("community", { compose: { category: a.category ?? undefined } });
+    else if (a.kind === "open_shuttle_map") go("shuttle");
+    else if (a.kind === "open_blue_phone_map") go("bluephones");
     else if (a.kind === "call" && a.phone) {
       log({ agent: "rule", title: `Call button: ${a.label}`, detail: `Opens the phone dialer (${a.phone}); nothing is dialed automatically.` });
       window.location.href = telHref(a.phone);
@@ -121,7 +124,7 @@ export default function Chat() {
                       <div className="acts">
                         {m.actions!.map((a, j) => (
                           <button key={j} className={`btn sm ${a.kind === "call" && a.phone === "911" ? "danger" : j === 0 ? "primary" : ""}`} onClick={() => act(a)}>
-                            {a.kind === "start_walk" && <IconWalk size={15} />}{a.kind === "call" && <IconPhone size={15} />}{a.kind === "request_escort" && <IconShield size={15} />}{a.label}
+                            {a.kind === "start_walk" && <IconWalk size={15} />}{a.kind === "call" && <IconPhone size={15} />}{a.kind === "request_escort" && <IconShield size={15} />}{a.kind === "post_alert" && <IconPlus size={15} />}{a.label}
                           </button>
                         ))}
                       </div>

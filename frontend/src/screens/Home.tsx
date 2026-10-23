@@ -129,7 +129,7 @@ export default function Home() {
       <div className="section-title"><span>Your well-being</span></div>
       <div className="well-card">
         <div className="row" style={{ alignItems: "flex-start" }}>
-          <span style={{ color: "var(--yale)", marginTop: 2 }}><IconHeart size={20} /></span>
+          <span style={{ color: "var(--ink)", marginTop: 2 }}><IconHeart size={20} /></span>
           <div className="grow">
             <b>Shaken by something you saw or heard?</b>
             <div className="small muted" style={{ marginTop: 3 }}>

@@ -15,7 +15,9 @@ from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import ModelRequest, ModelResponse, TextPart, UserPromptPart
 from pydantic_ai.usage import UsageLimits
 
+import bluephones
 import events
+import shuttle
 from agents.runtime import as_json, load_prompt, run_logged, settings
 from config import TZ
 from db import loads, meters_between, now_utc, parse_iso, rows
@@ -95,6 +97,8 @@ def services_status(conn: sqlite3.Connection, now_local: datetime) -> dict[str, 
             item("Yale Mental Health & Counseling", weekday and 8.5 <= h < 17),
             item("On-call mental health clinician", not (weekday and 8.5 <= h < 17)),
             item("Walden Peer Counseling", h >= 20 or h < 8),
+            item("Yale Employee Assistance Program (Optum)", True),
+            item("Yale Shuttle", h >= 5.5),
             item("SHARE Center", True),
             item("988 Suicide & Crisis Lifeline", True),
         ],
@@ -170,14 +174,26 @@ def get_agent() -> Agent:
             "from": a["name"], "to": b["name"], "walk_estimate_min": walk_min,
             "distance_m": int(straight * DETOUR),
             "incidents_on_route": on_route[:8], "after_dark_approx": status["after_dark_approx"],
+            "blue_phones_along_route": bluephones.along(a, b, 60),
             "escort_and_rides": [s for s in status["services"]
                                  if s["name"] in ("Yale Security walking escort", "Nighttime Safe Ride")],
         })
 
     @agent.tool
+    def shuttle_options(ctx: RunContext[ConciergeDeps], origin_place_id: int, dest_place_id: int) -> str:
+        """Fastest way between two places: walking vs. each Yale Shuttle route running now, live from Yale's shuttle
+        system. Each option: where to board and get off, minutes until the bus, ride minutes in the direction the bus
+        drives (long_way_around flags a bus that loops across town first), total minutes and arrival time.
+        `recommend` is "shuttle", "walk", or "none" (no single ride connects them now)."""
+        a, b = _place(ctx.deps.conn, origin_place_id), _place(ctx.deps.conn, dest_place_id)
+        if not a or not b:
+            return as_json({"error": "Unknown place id. Use find_place first."})
+        return as_json({"from": a["name"], "to": b["name"], **shuttle.options(a, b)})
+
+    @agent.tool
     def get_resources(ctx: RunContext[ConciergeDeps],
                       category: Literal["emergency", "escort", "ride", "mental_health", "sexual_misconduct",
-                                        "app", "all"] = "all") -> str:
+                                        "all"] = "all") -> str:
         """Verified Yale safety and support resources (phone numbers, hours, who can use them)."""
         sql, params = "SELECT name, category, phone, phone_display, hours, who, description FROM resources", ()
         if category != "all":

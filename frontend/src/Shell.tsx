@@ -5,12 +5,14 @@ import Sheet from "./components/Sheet";
 import SosOverlay from "./components/SosOverlay";
 import { IconChart, IconChat, IconHome, IconMap, IconPhone, IconPin, IconRadio, IconUsers, IconWalk } from "./icons";
 import Alerts from "./screens/Alerts";
+import BluePhones from "./screens/BluePhones";
 import Community from "./screens/Community";
 import Chat from "./screens/Chat";
 import Dispatch from "./screens/Dispatch";
 import Home from "./screens/Home";
 import Me from "./screens/Me";
 import Resources from "./screens/Resources";
+import Shuttle from "./screens/Shuttle";
 import Usage from "./screens/Usage";
 import WalkScreen from "./screens/Walk";
 import { useApp, type Tab } from "./state";
@@ -42,7 +44,7 @@ export default function Shell() {
 
   const screen = {
     home: <Home />, community: <Community />, alerts: <Alerts />, walk: <WalkScreen />, resources: <Resources />,
-    dispatch: <Dispatch />, usage: <Usage />, ask: null,
+    dispatch: <Dispatch />, usage: <Usage />, ask: null, bluephones: <BluePhones />, shuttle: <Shuttle />,
   }[tab];
 
   return (
@@ -69,7 +71,7 @@ export default function Shell() {
 
         <nav className="tabbar" style={{ gridTemplateColumns: `repeat(${tabs.length}, 1fr)` }}>
           {tabs.map((t) => (
-            <button key={t.id} className={tab === t.id ? "on" : ""} onClick={() => go(t.id)}>
+            <button key={t.id} className={tab === t.id || (t.id === "resources" && (tab === "bluephones" || tab === "shuttle")) ? "on" : ""} onClick={() => go(t.id)}>
               {t.icon}
               {t.label}
             </button>

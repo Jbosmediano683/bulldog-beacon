@@ -1,0 +1,559 @@
+{
+ "phases": {
+  "A": {
+   "users": 50,
+   "seconds": 9.1
+  },
+  "B5": {
+   "users": 5,
+   "seconds": 24.4
+  },
+  "B15": {
+   "users": 15,
+   "seconds": 20.1
+  },
+  "B30": {
+   "users": 30,
+   "seconds": 15.4
+  }
+ },
+ "ai_notes": {
+  "chats": 50,
+  "chat_fallbacks": 0,
+  "chat_with_action": 38,
+  "post_status": {
+   "published": 34,
+   "revised": 16
+  },
+  "comment_status": {
+   "published": 50
+  },
+  "chat_rows": [
+   {
+    "wave": "B AI wave of 5",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 9568.9
+   },
+   {
+    "wave": "B AI wave of 5",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 9839.7
+   },
+   {
+    "wave": "B AI wave of 5",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 10652.8
+   },
+   {
+    "wave": "B AI wave of 5",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 10680.0
+   },
+   {
+    "wave": "B AI wave of 5",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 10903.0
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 2,
+    "tools": 1,
+    "ms": 3404.2
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 2,
+    "tools": 1,
+    "ms": 3551.7
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 2,
+    "tools": 1,
+    "ms": 4219.6
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 2,
+    "tools": 1,
+    "ms": 4351.4
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 2,
+    "tools": 1,
+    "ms": 4578.2
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 4881.7
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 5361.2
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 5805.7
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 5959.0
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 5979.8
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 6835.2
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 7375.4
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 8246.3
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 8413.4
+   },
+   {
+    "wave": "B AI wave of 15",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 10877.6
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 2,
+    "tools": 1,
+    "ms": 4088.4
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 2,
+    "tools": 1,
+    "ms": 4851.6
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 2,
+    "tools": 1,
+    "ms": 5234.8
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 2,
+    "tools": 3,
+    "ms": 5997.8
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 6521.3
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 6603.0
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 6990.0
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 7052.3
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 7114.7
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 7581.7
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 7650.8
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 7701.7
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 7694.0
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 7751.8
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 7779.7
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 8008.7
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 8193.6
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 8308.2
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 8539.6
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 8623.3
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 2,
+    "tools": 1,
+    "ms": 8738.2
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 8782.9
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 8948.5
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 9092.0
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 9182.2
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 9887.2
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 10650.2
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 4,
+    "tools": 2,
+    "ms": 10661.2
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 10758.2
+   },
+   {
+    "wave": "B AI wave of 30",
+    "model_calls": 3,
+    "tools": 2,
+    "ms": 10803.0
+   }
+  ]
+ },
+ "abuse": {
+  "sent": 20,
+  "answered_by_ai": 8,
+  "refused_by_rate_limit": 12
+ },
+ "model_calls": {
+  "runs": 192,
+  "statuses": {
+   "ok": 192
+  },
+  "tokens": 557045,
+  "cost_usd": 0.02694,
+  "p50_latency_s": 2.11,
+  "p95_latency_s": 9.29
+ },
+ "server_error_lines": [],
+ "table": [
+  {
+   "phase": "A browse",
+   "endpoint": "/api/community",
+   "requests": 414,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 227,
+   "p95_ms": 287,
+   "max_ms": 418
+  },
+  {
+   "phase": "A browse",
+   "endpoint": "/api/events",
+   "requests": 393,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 189,
+   "p95_ms": 222,
+   "max_ms": 285
+  },
+  {
+   "phase": "A browse",
+   "endpoint": "/api/incidents",
+   "requests": 423,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 246,
+   "p95_ms": 336,
+   "max_ms": 438
+  },
+  {
+   "phase": "A browse",
+   "endpoint": "/api/places",
+   "requests": 407,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 217,
+   "p95_ms": 271,
+   "max_ms": 364
+  },
+  {
+   "phase": "A browse",
+   "endpoint": "/api/resources",
+   "requests": 363,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 216,
+   "p95_ms": 278,
+   "max_ms": 402
+  },
+  {
+   "phase": "B AI wave of 15",
+   "endpoint": "/api/chat",
+   "requests": 15,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 5806,
+   "p95_ms": 8413,
+   "max_ms": 10878
+  },
+  {
+   "phase": "B AI wave of 15",
+   "endpoint": "/api/comments",
+   "requests": 15,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 1430,
+   "p95_ms": 1778,
+   "max_ms": 2706
+  },
+  {
+   "phase": "B AI wave of 15",
+   "endpoint": "/api/community",
+   "requests": 15,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 22,
+   "p95_ms": 38,
+   "max_ms": 40
+  },
+  {
+   "phase": "B AI wave of 15",
+   "endpoint": "/api/posts",
+   "requests": 15,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 2290,
+   "p95_ms": 4615,
+   "max_ms": 13996
+  },
+  {
+   "phase": "B AI wave of 30",
+   "endpoint": "/api/chat",
+   "requests": 30,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 7780,
+   "p95_ms": 10758,
+   "max_ms": 10803
+  },
+  {
+   "phase": "B AI wave of 30",
+   "endpoint": "/api/comments",
+   "requests": 30,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 1738,
+   "p95_ms": 3257,
+   "max_ms": 3401
+  },
+  {
+   "phase": "B AI wave of 30",
+   "endpoint": "/api/community",
+   "requests": 30,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 63,
+   "p95_ms": 195,
+   "max_ms": 203
+  },
+  {
+   "phase": "B AI wave of 30",
+   "endpoint": "/api/posts",
+   "requests": 30,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 2093,
+   "p95_ms": 4485,
+   "max_ms": 5161
+  },
+  {
+   "phase": "B AI wave of 5",
+   "endpoint": "/api/chat",
+   "requests": 5,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 10653,
+   "p95_ms": 10903,
+   "max_ms": 10903
+  },
+  {
+   "phase": "B AI wave of 5",
+   "endpoint": "/api/comments",
+   "requests": 5,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 1382,
+   "p95_ms": 1702,
+   "max_ms": 1702
+  },
+  {
+   "phase": "B AI wave of 5",
+   "endpoint": "/api/community",
+   "requests": 5,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 25,
+   "p95_ms": 27,
+   "max_ms": 27
+  },
+  {
+   "phase": "B AI wave of 5",
+   "endpoint": "/api/posts",
+   "requests": 5,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 1656,
+   "p95_ms": 13552,
+   "max_ms": 13552
+  },
+  {
+   "phase": "C SOS during AI load",
+   "endpoint": "/api/sos",
+   "requests": 10,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 36,
+   "p95_ms": 233,
+   "max_ms": 233
+  },
+  {
+   "phase": "D abuse: 20 chats from one NetID",
+   "endpoint": "/api/chat",
+   "requests": 20,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 271,
+   "p95_ms": 4628,
+   "max_ms": 6178
+  }
+ ],
+ "total_requests": 2230,
+ "total_server_errors": 0,
+ "wall_seconds": 161.7,
+ "chat_ms_by_model_calls": {
+  "2": {
+   "n": 10,
+   "p50_ms": 4351
+  },
+  "3": {
+   "n": 39,
+   "p50_ms": 8194
+  },
+  "4": {
+   "n": 1,
+   "p50_ms": 10661
+  }
+ }
+}

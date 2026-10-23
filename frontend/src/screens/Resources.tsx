@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { api, telHref, type Resource, type ServiceStatus } from "../api";
-import { IconInfo, IconPhone } from "../icons";
+import { IconChevron, IconInfo, IconMap, IconPhone } from "../icons";
+import { useApp, type Tab } from "../state";
+
+// These resources open a map inside Beacon instead of sending people to another site or app.
+const MAPS: Record<string, { tab: Tab; cta: string }> = {
+  "Blue emergency phones": { tab: "bluephones", cta: "See every blue phone on the map" },
+  "Yale Shuttle": { tab: "shuttle", cta: "Open the live shuttle map" },
+};
 
 const GROUPS: { id: string; title: string; note?: string }[] = [
   { id: "emergency", title: "Emergency" },
@@ -8,10 +15,10 @@ const GROUPS: { id: string; title: string; note?: string }[] = [
   { id: "ride", title: "" },
   { id: "mental_health", title: "Talk to someone", note: "Feeling shaken, anxious, or not okay is a normal reaction. These people are there for it." },
   { id: "sexual_misconduct", title: "Sexual harassment and assault" },
-  { id: "app", title: "Other Yale tools" },
 ];
 
 export default function Resources() {
+  const { go } = useApp();
   const [data, setData] = useState<{ resources: Resource[]; status: ServiceStatus } | null>(null);
   useEffect(() => { api<{ resources: Resource[]; status: ServiceStatus }>("/api/resources").then(setData).catch(() => {}); }, []);
   if (!data) return <div className="empty">Loading…</div>;
@@ -21,7 +28,7 @@ export default function Resources() {
     <div>
       <div className="h1">Resources</div>
       <p className="small muted" style={{ marginTop: 2 }}>
-        Every number here was copied from a Yale web page (source linked) and checked on Oct 22, 2026. Beacon's AI is only
+        Every number here was copied from a Yale web page (source linked) and checked in October 2026. Beacon's AI is only
         allowed to give out these numbers.
       </p>
       {GROUPS.map((g) => {
@@ -34,9 +41,15 @@ export default function Resources() {
             <div className="stack">
               {items.map((r) => {
                 const o = open(r.name);
+                const opensMap = MAPS[r.name];
                 return (
-                  <div className="card res" key={r.id}>
-                    {r.phone ? (
+                  <div className={`card res ${opensMap ? "opens" : ""}`} key={r.id}
+                       role={opensMap ? "button" : undefined} tabIndex={opensMap ? 0 : undefined}
+                       onClick={opensMap ? () => go(opensMap.tab) : undefined}
+                       onKeyDown={opensMap ? (e) => { if (e.key === "Enter") go(opensMap.tab); } : undefined}>
+                    {opensMap ? (
+                      <span className="call map"><IconMap size={18} /></span>
+                    ) : r.phone ? (
                       <a className={`call ${r.category === "emergency" ? "red" : ""}`} href={telHref(r.phone)} aria-label={`Call ${r.name}`}><IconPhone size={18} /></a>
                     ) : (
                       <span className="call none"><IconInfo size={18} /></span>
@@ -48,8 +61,9 @@ export default function Resources() {
                       </div>
                       <div className="num">{r.phone_display}</div>
                       <div className="small muted" style={{ marginTop: 4 }}>{r.description}</div>
+                      {opensMap && <div className="map-cta">{opensMap.cta} <IconChevron size={13} /></div>}
                       <div className="tiny faint" style={{ marginTop: 6 }}>
-                        {r.hours} · {r.who} · <a href={r.source_url} target="_blank" rel="noreferrer">source</a>
+                        {r.hours} · {r.who} · <a href={r.source_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>source</a>
                       </div>
                     </div>
                   </div>

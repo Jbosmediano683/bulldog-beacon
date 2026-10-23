@@ -9,6 +9,9 @@ Layers (matching safety_events.layer):
 
 import re
 import sqlite3
+import threading
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import timedelta
 
 from config import (GLOBAL_DAILY_TOKEN_CAP, POSTS_PER_HOUR, TZ, USER_AI_CALLS_PER_MINUTE,
@@ -140,15 +143,16 @@ def tokens_today(conn: sqlite3.Connection, user_id: int | None = None) -> int:
     return int(conn.execute(sql, params).fetchone()[0])
 
 
-def check_ai_budget(conn: sqlite3.Connection, user_id: int | None) -> None:
+def check_ai_budget(conn: sqlite3.Connection, user_id: int | None, pending: int = 0) -> None:
     """Called before every agent run. Three limits: calls per minute per user,
-    tokens per day per user, and tokens per day for the whole app."""
+    tokens per day per user, and tokens per day for the whole app. `pending` is the
+    number of this user's runs still in progress (not yet in ai_runs)."""
     if user_id is not None:
         minute_ago = iso(now_utc() - timedelta(minutes=1))
         recent = conn.execute("SELECT COUNT(*) FROM ai_runs WHERE user_id = ? AND created_at >= ?",
                               (user_id, minute_ago)).fetchone()[0]
-        if recent >= USER_AI_CALLS_PER_MINUTE:
-            log_safety(conn, "rate_limited", "rule", f"{recent} AI runs in the last minute", user_id)
+        if recent + pending >= USER_AI_CALLS_PER_MINUTE:
+            log_safety(conn, "rate_limited", "rule", f"{recent} AI runs in the last minute, {pending} in progress", user_id)
             raise LimitExceeded("rate_limited", "You're sending requests very quickly. Please wait a minute and try again.")
         used = tokens_today(conn, user_id)
         if used >= USER_DAILY_TOKEN_CAP:
@@ -160,6 +164,29 @@ def check_ai_budget(conn: sqlite3.Connection, user_id: int | None) -> None:
         log_safety(conn, "global_budget_reached", "rule", f"{total} tokens today (cap {GLOBAL_DAILY_TOKEN_CAP})", user_id)
         raise LimitExceeded("global_budget_reached",
                             "Beacon's AI is paused for today (budget reached). Emergency features still work.")
+
+
+_in_flight: dict[int, int] = {}
+_in_flight_lock = threading.Lock()
+
+
+@contextmanager
+def ai_slot(conn: sqlite3.Connection, user_id: int | None) -> Iterator[None]:
+    """Check the caps and hold a slot while a run is in progress. Runs are only logged when they
+    finish, so without this a burst of simultaneous requests would all pass the per-minute check
+    (the stress test sent 20 chats at once from one NetID and all 20 got through)."""
+    with _in_flight_lock:
+        check_ai_budget(conn, user_id, _in_flight.get(user_id, 0) if user_id is not None else 0)
+        if user_id is not None:
+            _in_flight[user_id] = _in_flight.get(user_id, 0) + 1
+    try:
+        yield
+    finally:
+        if user_id is not None:
+            with _in_flight_lock:
+                _in_flight[user_id] -= 1
+                if not _in_flight[user_id]:
+                    del _in_flight[user_id]
 
 
 def check_post_rate(conn: sqlite3.Connection, user_id: int) -> None:

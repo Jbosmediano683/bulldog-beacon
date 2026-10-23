@@ -1,4 +1,4 @@
-Bulldog Beacon offline safety tests: 63/63 passed (scripted model, 0 tokens)
+Bulldog Beacon offline safety tests: 83/83 passed (scripted model, 0 tokens)
 
 PASS  .env one folder up is found (grader layout)
 PASS  .env in the repo folder wins over the parent
@@ -22,6 +22,8 @@ PASS  moderator outage: post is held, not published (fail closed)
 PASS  guard removes a phone number the moderator added
 PASS  guard: 'profiling' flagged but 'publish' becomes 'revise'
 PASS  guard: self-harm post always gets 988 support, even if the model forgets
+PASS  ...and a student is given Yale Health's on-call clinician
+PASS  ...and staff get the Employee Assistance Program, not a students-only line
 PASS  guard: empty published text is blocked
 PASS  mock CAS: first sign-in with a new NetID creates the account
 PASS  post rate limit: 7th post in an hour is refused before any AI call
@@ -34,6 +36,8 @@ PASS  guard: citation to an incident the agent never looked up is removed
 PASS  guard: call button with an unverified number is dropped
 PASS  guard: walk button to a non-existent place is dropped
 PASS  guard: verified call button is kept
+PASS  guard: 'Post an alert' button with category 'theft' -> 'theft'
+PASS  guard: 'Post an alert' button with category 'urgent!!' -> None
 PASS  crisis words pin the 988 button even if the model forgets
 PASS  danger words pin a 911 button first
 PASS  loop protection: a tool-call loop is stopped by UsageLimits
@@ -41,6 +45,8 @@ PASS  ...and the user gets a safe fallback answer
 PASS  model outage: chat answers with emergency numbers instead of failing
 PASS  daily token cap per NetID stops AI calls
 PASS  rate limit: 9th AI call in a minute is refused
+PASS  rate limit: runs still in progress count (20 simultaneous chats can't slip through)
+PASS  rate limit: slots are released when runs finish
 PASS  SOS fires with the AI down (no model in the path)
 PASS  ...and trusted contacts are notified by code
 PASS  brief failure is reported, the SOS stays open
@@ -63,3 +69,17 @@ PASS  events: starts in 30 min = 'soon'
 PASS  events: gallery-style opening hours rank after real happenings
 PASS  events: a venue with bad coordinates gets no map pin
 PASS  events: virtual and finished events are left out
+PASS  events: a stale copy is served instantly while one background refresh runs
+PASS  walk: 'Current location' starts from the phone's GPS
+PASS  walk: GPS outside New Haven falls back to the chosen place
+PASS  walk: starting where you're going is refused
+PASS  walk: databases from before this change are upgraded
+PASS  blue phones: about 500 phones, every one inside Yale's area
+PASS  blue phones: one is mapped within 60 m of Phelps Gate
+PASS  resources: LiveSafe is gone; staff EAP, shuttle, and blue phones are there
+PASS  shuttle: if Yale's feed is down, the app says so instead of failing
+PASS  shuttle: Union Station to West Campus finds the Purple route and the next bus
+PASS  trip planner: picks the bus going the right way, timed from live arrivals
+PASS  trip planner: a bus that loops the long way around is flagged and ranked lower
+PASS  trip planner: for a short trip it says to walk
+PASS  trip planner: says so when no shuttle connects the two places

@@ -43,13 +43,15 @@ class CorroborationResult(BaseModel):
 
 
 class ConciergeAction(BaseModel):
-    kind: Literal["start_walk", "call", "request_escort", "open_map", "open_resources"]
+    kind: Literal["start_walk", "call", "request_escort", "open_map", "open_resources", "post_alert", "open_shuttle_map",
+                  "open_blue_phone_map"]
     label: str = Field(description="Button text, at most 40 characters.")
     origin_place_id: int | None = None
     dest_place_id: int | None = None
     minutes: int | None = Field(default=None, description="start_walk only: minutes until check-in is due.")
     phone: str | None = Field(default=None, description="call only: digits of a number from get_resources.")
     incident_id: int | None = Field(default=None, description="open_map only: incident to focus.")
+    category: str | None = Field(default=None, description="post_alert only: suggested alert category, e.g. theft.")
 
 
 class ConciergeReply(BaseModel):
@@ -108,7 +110,9 @@ class SosNoteBody(BaseModel):
 
 
 class WalkBody(BaseModel):
-    origin_place_id: int
+    origin_place_id: int | None = None
+    origin_lat: float | None = None   # "Current location": the phone's GPS (used only inside the service area)
+    origin_lng: float | None = None
     dest_place_id: int
     minutes: int = Field(ge=1, le=120)
 

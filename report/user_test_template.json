@@ -1,0 +1,13 @@
+{
+  "_how_to_use": "Copy this file to output/user_test.json, replace every <...> with what really happened, delete unused entries, then run: python report/build_report.py. The Impact section and slide 9 will show it instead of the placeholder.",
+  "quotes": [
+    {"quote": "<one sentence in their own words>", "who": "<e.g. My wife, who works night shifts at YCCI>"},
+    {"quote": "<one sentence in their own words>", "who": "<e.g. A first-year SOM classmate>"}
+  ],
+  "notes": [
+    "Task 1, request a walking escort: <how they do it today> took <time>; with Beacon it took <time>.",
+    "Task 2, check their route tonight: <today's way and time> vs. <Beacon time>.",
+    "Task 3, post an alert and a comment: <what happened, anything confusing>.",
+    "Would they use it? <their 1-5 rating and why>."
+  ]
+}

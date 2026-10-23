@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api, clock, distanceM, type Walk } from "../api";
 import BeaconMap from "../components/BeaconMap";
 import { mmss, useCountdown } from "../components/WalkMini";
+import { locate, type Located } from "../geo";
 import { useApp } from "../state";
 
 function estimateMinutes(a?: { lat: number; lng: number }, b?: { lat: number; lng: number }): number {
@@ -75,10 +76,21 @@ function ActiveWalk({ walk, onChange }: { walk: Walk; onChange: (w: Walk | null)
 export default function WalkScreen() {
   const { places, here, placeById, walkDraft, clearWalkDraft, user, log } = useApp();
   const [walk, setWalk] = useState<Walk | null | undefined>(undefined);
-  const [from, setFrom] = useState<number | "">(here?.id ?? "");
+  const [from, setFrom] = useState<number | "gps">("gps");   // "gps" = Current location
+  const [loc, setLoc] = useState<Located | "locating" | null>(null);
+  const [locTry, setLocTry] = useState(0);
   const [to, setTo] = useState<number | "">("");
   const [minutes, setMinutes] = useState(10);
   const [touched, setTouched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (from !== "gps") return;
+    let live = true;
+    setLoc("locating");
+    locate().then((r) => { if (live) setLoc(r); });
+    return () => { live = false; };
+  }, [from, locTry]);
 
   useEffect(() => {
     const load = () => api<Walk | null>("/api/walks/active").then(setWalk).catch(() => {});
@@ -96,20 +108,38 @@ export default function WalkScreen() {
     }
   }, [walkDraft, clearWalkDraft]);
 
+  // The start point: the phone's location when it's in New Haven, otherwise the location set at the top of the app.
+  const gpsFix = from === "gps" && loc && loc !== "locating" && loc.kind === "gps" ? loc.fix : null;
+  const a = from === "gps" ? (gpsFix ? { lat: gpsFix.lat, lng: gpsFix.lng } : here) : placeById(from);
+  const b = placeById(Number(to));
+
   useEffect(() => {
-    if (!touched && from && to) setMinutes(estimateMinutes(placeById(Number(from)), placeById(Number(to))));
-  }, [from, to, touched, placeById]);
+    if (!touched && a && b) setMinutes(estimateMinutes(a, b));
+  }, [a?.lat, a?.lng, b?.id, touched]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function start() {
-    const w = await api<Walk>("/api/walks", { body: { origin_place_id: from, dest_place_id: to, minutes } });
-    setWalk(w);
-    log({ agent: "rule", title: "Walk With Me started", detail: `Timer: ${minutes} min. Missed check-ins escalate by code, not AI.` });
+    setError(null);
+    const origin = from === "gps"
+      ? { origin_lat: gpsFix?.lat ?? null, origin_lng: gpsFix?.lng ?? null, origin_place_id: here?.id ?? null }
+      : { origin_place_id: from };
+    try {
+      const w = await api<Walk>("/api/walks", { body: { ...origin, dest_place_id: to, minutes } });
+      setWalk(w);
+      log({ agent: "rule", title: "Walk With Me started", detail: `From ${w.origin?.name}. Timer: ${minutes} min. Missed check-ins escalate by code, not AI.` });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Couldn't start the walk.");
+    }
   }
 
   if (walk === undefined) return <div className="empty">Loading…</div>;
   if (walk && ["active", "overdue", "escalated"].includes(walk.status)) return <ActiveWalk walk={walk} onChange={setWalk} />;
 
-  const a = placeById(Number(from)), b = placeById(Number(to));
+  const fallback = here ? `the location set at the top of the app (${here.name})` : "a place from the list";
+  const locNote = from !== "gps" ? null
+    : loc === "locating" || loc === null ? "Finding your location…"
+    : loc.kind === "gps" ? `Using your phone's location (accurate to about ${Math.max(5, Math.round(loc.fix.accuracy))} m).`
+    : loc.kind === "outside" ? `You're not in New Haven right now, so Beacon will start from ${fallback}.`
+    : `${loc.reason} Beacon will start from ${fallback}, or pick a place from the list.`;
   return (
     <div>
       <div className="h1">Walk With Me</div>
@@ -121,15 +151,26 @@ export default function WalkScreen() {
       <div className="stack">
         <div className="field">
           <label>From</label>
-          <select className="select" value={from} onChange={(e) => setFrom(Number(e.target.value))}>
-            {places.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          <select className="select" value={from} onChange={(e) => setFrom(e.target.value === "gps" ? "gps" : Number(e.target.value))}>
+            <option value="gps">Current location</option>
+            <optgroup label="Yale places">
+              {places.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+            </optgroup>
           </select>
+          {locNote && (
+            <div className={`loc-note ${loc && loc !== "locating" && loc.kind === "gps" ? "ok" : ""}`}>
+              {locNote}
+              {loc && loc !== "locating" && loc.kind === "unavailable" && (
+                <button className="linkish" onClick={() => setLocTry((n) => n + 1)}>Try again</button>
+              )}
+            </div>
+          )}
         </div>
         <div className="field">
           <label>To</label>
           <select className="select" value={to} onChange={(e) => setTo(Number(e.target.value))}>
             <option value="">Choose destination</option>
-            {places.filter((p) => p.id !== from).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+            {places.filter((p) => from === "gps" || p.id !== from).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </div>
         <div className="field">
@@ -148,7 +189,8 @@ export default function WalkScreen() {
             {user.contacts.length ? user.contacts.map((c) => c.name).join(", ") : "None yet. Add them from your profile (top right)."}
           </div>
         </div>
-        <button className="btn primary block" style={{ padding: 14 }} disabled={!from || !to} onClick={start}>Start walk</button>
+        {error && <div className="verdict blocked small">{error}</div>}
+        <button className="btn primary block" style={{ padding: 14 }} disabled={!to || loc === "locating" && from === "gps"} onClick={start}>Start walk</button>
         <div className="tiny faint" style={{ textAlign: "center" }}>Demo tip: set 1 minute to see the missed check-in flow.</div>
       </div>
     </div>

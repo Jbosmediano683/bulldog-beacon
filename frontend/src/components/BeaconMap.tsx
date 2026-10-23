@@ -1,12 +1,11 @@
 import L from "leaflet";
 import { useEffect, useRef } from "react";
-import { SERVICE_BOUNDS, type Incident, type YaleEvent } from "../api";
+import { type Incident, type YaleEvent } from "../api";
+import { createBaseMap, mapColors } from "./mapBase";
 
 type Pt = { lat: number; lng: number };
 
 const CAL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10.5h16M8.5 3.5v4M15.5 3.5v4"/></svg>';
-
-const AREA = L.latLngBounds([SERVICE_BOUNDS[0], SERVICE_BOUNDS[1]], [SERVICE_BOUNDS[2], SERVICE_BOUNDS[3]]);
 
 export default function BeaconMap({
   incidents = [], events = [], me, focusId, focusEventId, onSelect, onSelectEvent, route, tall = false, view = "",
@@ -29,31 +28,9 @@ export default function BeaconMap({
 
   useEffect(() => {
     if (!el.current || map.current) return;
-    // The map is locked to Beacon's service area: Yale's campuses (including West
-    // Campus) and the neighborhoods where students and staff live.
-    const m = L.map(el.current, {
-      zoomControl: true, attributionControl: true,
-      maxBounds: AREA.pad(0.04), maxBoundsViscosity: 1.0, minZoom: 12,
-    }).setView([41.3083, -72.9279], 15);
-    // Esri's Light Gray Canvas basemap (no API key needed) plus its street-name layer.
-    const esri = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas";
-    L.tileLayer(`${esri}/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`, {
-      maxZoom: 19, maxNativeZoom: 16, bounds: AREA.pad(0.3),
-      attribution: "Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors",
-    }).addTo(m);
-    L.tileLayer(`${esri}/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}`, { maxZoom: 19, maxNativeZoom: 16, bounds: AREA.pad(0.3) }).addTo(m);
-    // Dim everything outside the service area and outline its edge.
-    const world: L.LatLngExpression[] = [[-85, -180], [-85, 180], [85, 180], [85, -180]];
-    const hole: L.LatLngExpression[] = [AREA.getSouthWest(), AREA.getNorthWest(), AREA.getNorthEast(), AREA.getSouthEast()];
-    L.polygon([world, hole], { stroke: false, fillColor: "#f2f1ed", fillOpacity: 0.7, interactive: false }).addTo(m);
-    L.rectangle(AREA, { color: "#00356b", weight: 1, opacity: 0.4, dashArray: "4 6", fill: false, interactive: false }).addTo(m);
+    const m = createBaseMap(el.current);
     layer.current = L.layerGroup().addTo(m);
     map.current = m;
-    window.setTimeout(() => {
-      if (!map.current) return;
-      m.invalidateSize();
-      m.setMinZoom(Math.max(11, m.getBoundsZoom(AREA, false)));  // zoom out to the whole area, no further
-    }, 80);
     return () => { map.current?.remove(); map.current = null; };
   }, []);
 
@@ -63,7 +40,7 @@ export default function BeaconMap({
     g.clearLayers();
     const pts: L.LatLngExpression[] = [];
     if (route) {
-      L.polyline(route.map((p) => [p.lat, p.lng] as [number, number]), { color: "#286dc0", weight: 5, opacity: 0.9, dashArray: "8 8" }).addTo(g);
+      L.polyline(route.map((p) => [p.lat, p.lng] as [number, number]), { color: mapColors().edge, weight: 5, opacity: 0.9, dashArray: "8 8" }).addTo(g);
       route.forEach((p) => pts.push([p.lat, p.lng]));
       L.marker([route[1].lat, route[1].lng], {
         icon: L.divIcon({ className: "", html: '<div class="pin info" style="background:#00356b"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }),

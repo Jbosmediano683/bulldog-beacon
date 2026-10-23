@@ -9,7 +9,7 @@ judgement on free text is needed:
 
 import sqlite3
 from datetime import timedelta
-from typing import Any
+from typing import Any, get_args
 
 from fastapi import HTTPException
 
@@ -18,16 +18,21 @@ from agents.runtime import AgentUnavailable
 from config import CAMPUS_CENTER, CHAT_HISTORY_TURNS, MAX_CHAT_CHARS, MAX_POST_CHARS, TZ, in_service_area
 from db import (connect, dumps, iso, loads, log_safety, meters_between, nearest_place, now_iso, now_utc, one,
                 parse_iso, rows)
-from models import ChatBody, ConciergeAction, ConciergeReply, PostBody, SosBody, WalkBody
+from models import Category, ChatBody, ConciergeAction, ConciergeReply, PostBody, SosBody, WalkBody
 from safety import (LimitExceeded, check_post_rate, crisis_language, immediate_danger_language,
                     looks_like_injection, redact_personal_info, vet_phone_numbers)
 
+POST_CATEGORIES = frozenset(get_args(Category))
 CORROBORATE_RADIUS_M = 300
 CORROBORATE_HOURS = 6
 SERVICE_AREA_M = 2500      # a GPS fix must also be this close to a known place
 WALK_ESCALATE_AFTER = timedelta(minutes=2)
-CRISIS_NOTE = ("If you're struggling, you're not alone: call or text 988 any time, or call Yale's on-call mental health "
-               "clinician at (203) 432-0123.")
+CRISIS_NOTE = {  # students get Yale Health's on-call clinician; faculty and staff get the Employee Assistance Program
+    "student": ("If you're struggling, you're not alone: call or text 988 any time, or call Yale's on-call mental health "
+                "clinician at (203) 432-0123."),
+    "employee": ("If you're struggling, you're not alone: call or text 988 any time, or call Yale's Employee Assistance "
+                 "Program (24/7, free and confidential) at 866-416-6586."),
+}
 
 
 def local_now_text() -> str:
@@ -127,7 +132,7 @@ async def submit_post(conn: sqlite3.Connection, user: dict[str, Any], body: Post
         return _finish_post(conn, post_id, "held", "", {"decision": "held", "layer": "rule", "note_to_author": note,
                                                          "error": exc.record.status}, _run_summary(exc.record))
 
-    decision = guard_decision(conn, result, text, user["id"], ref)
+    decision = guard_decision(conn, result, text, user["id"], ref, user["affiliation"])
 
     status = {"publish": "published", "revise": "revised", "block": "blocked", "redirect_911": "redirect_911"}[
         decision["decision"]]
@@ -135,7 +140,8 @@ async def submit_post(conn: sqlite3.Connection, user: dict[str, Any], body: Post
                         decision, _run_summary(record))
 
 
-def guard_decision(conn: sqlite3.Connection, result: Any, original_text: str, user_id: int, ref: str) -> dict[str, Any]:
+def guard_decision(conn: sqlite3.Connection, result: Any, original_text: str, user_id: int, ref: str,
+                   affiliation: str = "student") -> dict[str, Any]:
     """Code checks on the Moderator's output, shared by alerts and comments."""
     decision = result.model_dump()
     decision["layer"] = "agent"
@@ -161,8 +167,9 @@ def guard_decision(conn: sqlite3.Connection, result: Any, original_text: str, us
     if "self_harm" in decision["issues"] or crisis_language(original_text):
         decision["support"] = True
         if "988" not in decision["note_to_author"]:
-            decision["note_to_author"] = (decision["note_to_author"] + " " + CRISIS_NOTE).strip()
-            guards.append("added 988 and on-call clinician support the moderator left out")
+            note = CRISIS_NOTE["student" if affiliation == "student" else "employee"]
+            decision["note_to_author"] = (decision["note_to_author"] + " " + note).strip()
+            guards.append("added 988 and Yale support numbers the moderator left out")
     decision["guards"] = guards
     for g in guards:
         log_safety(conn, "output_guard", "guard", g, user_id, ref)
@@ -433,7 +440,7 @@ async def submit_comment(conn: sqlite3.Connection, user: dict[str, Any], post_id
         return finish("held", "", {"decision": "held", "layer": "rule", "error": exc.record.status,
                                    "note_to_author": "The moderator couldn't review your comment just now, so it wasn't posted."},
                       _run_summary(exc.record))
-    decision = guard_decision(conn, result, text, user["id"], ref)
+    decision = guard_decision(conn, result, text, user["id"], ref, user["affiliation"])
     status = {"publish": "published", "revise": "revised", "block": "blocked", "redirect_911": "redirect_911"}[decision["decision"]]
     return finish(status, decision["published_text"] if status in ("published", "revised") else "", decision,
                   _run_summary(record))
@@ -466,6 +473,8 @@ def _vet_actions(conn: sqlite3.Connection, actions: list[ConciergeAction], seen:
                 a.minutes = max(1, min(a.minutes or 15, 120))
         elif a.kind == "open_map" and a.incident_id is not None:
             ok = a.incident_id in seen
+        elif a.kind == "post_alert":
+            a.category = a.category if a.category in POST_CATEGORIES else None
         if ok:
             kept.append(a.model_dump())
         else:
@@ -651,6 +660,8 @@ def set_sos_status(conn: sqlite3.Connection, sos_id: int, status: str, who: str)
 
 def walk_view(conn: sqlite3.Connection, w: dict[str, Any]) -> dict[str, Any]:
     o, d = place_by_id(conn, w["origin_place_id"]), place_by_id(conn, w["dest_place_id"])
+    if o and w.get("origin_lat") is not None:  # started from the phone's current location
+        o = {**o, "name": w.get("origin_label") or "Current location", "lat": w["origin_lat"], "lng": w["origin_lng"]}
     return {**{k: w[k] for k in ("id", "user_id", "started_at", "eta", "status", "ended_at")},
             "origin": {"id": o["id"], "name": o["name"], "lat": o["lat"], "lng": o["lng"]} if o else None,
             "dest": {"id": d["id"], "name": d["name"], "lat": d["lat"], "lng": d["lng"]} if d else None,
@@ -658,10 +669,21 @@ def walk_view(conn: sqlite3.Connection, w: dict[str, Any]) -> dict[str, Any]:
 
 
 def start_walk(conn: sqlite3.Connection, user: dict[str, Any], body: WalkBody) -> dict[str, Any]:
-    if not (place_by_id(conn, body.origin_place_id) and place_by_id(conn, body.dest_place_id)):
+    dest = place_by_id(conn, body.dest_place_id)
+    gps = None
+    if body.origin_lat is not None and body.origin_lng is not None:
+        # "Current location": the phone's GPS if it's inside the service area, otherwise the place the member chose.
+        start, lat, lng = resolve_location(conn, body.origin_place_id, body.origin_lat, body.origin_lng)
+        if (lat, lng) == (body.origin_lat, body.origin_lng):
+            near = meters_between(lat, lng, start["lat"], start["lng"])
+            gps = (lat, lng, "Current location" + (f" (at {start['name']})" if near < 60 else f" (near {start['name']})"))
+    else:
+        start = place_by_id(conn, body.origin_place_id)
+    if not (start and dest):
         raise HTTPException(400, "Pick a start and a destination.")
-    if body.origin_place_id == body.dest_place_id:
-        raise HTTPException(400, "Start and destination are the same place.")
+    s_lat, s_lng = (gps[0], gps[1]) if gps else (start["lat"], start["lng"])
+    if meters_between(s_lat, s_lng, dest["lat"], dest["lng"]) < 40:
+        raise HTTPException(400, f"You're already at {dest['name']}." if gps else "Start and destination are the same place.")
     for w in rows(conn.execute("SELECT id FROM walks WHERE user_id = ? AND status IN ('active','overdue')", (user["id"],))):
         conn.execute("UPDATE walks SET status='cancelled', ended_at=? WHERE id=?", (now_iso(), w["id"]))
     contacts = loads(user["contacts_json"], [])
@@ -670,9 +692,10 @@ def start_walk(conn: sqlite3.Connection, user: dict[str, Any], body: WalkBody) -
     if contacts:
         events.append({"t": iso(t), "event": "Shared route with " + ", ".join(c["name"] for c in contacts) + " (simulated)"})
     cur = conn.execute(
-        "INSERT INTO walks (user_id, origin_place_id, dest_place_id, started_at, eta, status, contacts_json, events_json) "
-        "VALUES (?,?,?,?,?,'active',?,?)", (user["id"], body.origin_place_id, body.dest_place_id, iso(t),
-                                             iso(t + timedelta(minutes=body.minutes)), dumps(contacts), dumps(events)))
+        "INSERT INTO walks (user_id, origin_place_id, dest_place_id, origin_lat, origin_lng, origin_label, started_at, eta, "
+        "status, contacts_json, events_json) VALUES (?,?,?,?,?,?,?,?,'active',?,?)",
+        (user["id"], start["id"], dest["id"], *(gps or (None, None, None)), iso(t),
+         iso(t + timedelta(minutes=body.minutes)), dumps(contacts), dumps(events)))
     conn.commit()
     return walk_view(conn, one(conn, "SELECT * FROM walks WHERE id = ?", (cur.lastrowid,)) or {})
 

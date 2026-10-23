@@ -168,6 +168,14 @@ def test_post_rules(client: TestClient) -> None:
     r = client.post("/api/posts", json={"text": "all this crime makes me want to end it all", "category": "other", "place_id": 3}).json()
     check("guard: self-harm post always gets 988 support, even if the model forgets",
           "988" in r["moderation"]["note_to_author"] and r["moderation"].get("support") is True, r["moderation"]["note_to_author"])
+    check("...and a student is given Yale Health's on-call clinician", "432-0123" in r["moderation"]["note_to_author"])
+    login(client, "ycci01", "NightShift#2026")
+    reset(moderator=moderation(decision="block", issues=["self_harm"], published_text="", note_to_author="Not published."))
+    r = client.post("/api/posts", json={"text": "all this crime makes me want to end it all", "category": "other", "place_id": 5}).json()
+    note = r["moderation"]["note_to_author"]
+    check("...and staff get the Employee Assistance Program, not a students-only line",
+          "866-416-6586" in note and "432-0123" not in note, note)
+    login(client)
 
     reset(moderator=moderation(decision="publish", published_text="   "))
     r = client.post("/api/posts", json={"text": "Bike stolen outside Sterling today", "category": "theft", "place_id": 2}).json()
@@ -224,8 +232,17 @@ def test_corroborator_guards() -> None:
     conn.close()
 
 
+def fresh_minute(netid: str = "hd2026") -> None:
+    """Clear a member's AI runs so earlier tests don't trip the 8-a-minute limit."""
+    conn = connect()
+    conn.execute("DELETE FROM ai_runs WHERE user_id = (SELECT id FROM users WHERE netid = ?)", (netid,))
+    conn.commit()
+    conn.close()
+
+
 def test_chat_guards(client: TestClient) -> None:
     login(client)
+    fresh_minute()
     reset(concierge=reply(reply="Call the campus taxi at 203-479-1234.", cited_incident_ids=[999],
                           actions=[{"kind": "call", "label": "Taxi", "phone": "2034791234"},
                                    {"kind": "start_walk", "label": "Walk", "origin_place_id": 1, "dest_place_id": 9999, "minutes": 10},
@@ -238,6 +255,12 @@ def test_chat_guards(client: TestClient) -> None:
     check("guard: walk button to a non-existent place is dropped", all(k != "start_walk" for k, _ in kinds), str(kinds))
     check("guard: verified call button is kept", ("call", "2034324400") in kinds, str(kinds))
 
+    for asked, expected in (("theft", "theft"), ("urgent!!", None)):
+        reset(concierge=reply(actions=[{"kind": "post_alert", "label": "Post an alert", "category": asked}]))
+        r = client.post("/api/chat", json={"message": "my bike was stolen, how do I warn people?", "place_id": 13}).json()
+        cats = [a.get("category") for a in r["actions"] if a["kind"] == "post_alert"]
+        check(f"guard: 'Post an alert' button with category {asked!r} -> {expected!r}", cats == [expected], str(cats))
+
     reset(concierge=reply(reply="I'm sorry you're feeling this way."))
     r = client.post("/api/chat", json={"message": "I don't want to live anymore", "place_id": 1}).json()
     check("crisis words pin the 988 button even if the model forgets", any(a.get("phone") == "988" for a in r["actions"]))
@@ -246,14 +269,16 @@ def test_chat_guards(client: TestClient) -> None:
     r = client.post("/api/chat", json={"message": "someone is following me right now near the garage", "place_id": 11}).json()
     check("danger words pin a 911 button first", r["actions"] and r["actions"][0].get("phone") == "911")
 
+    fresh_minute()
     reset(concierge="loop")
     r = client.post("/api/chat", json={"message": "where is the garage", "place_id": 1}).json()
-    check("loop protection: a tool-call loop is stopped by UsageLimits", CALLS.get("concierge", 0) <= 6, str(CALLS))
+    check("loop protection: a tool-call loop is stopped by UsageLimits", 2 <= CALLS.get("concierge", 0) <= 6, str(CALLS))
     check("...and the user gets a safe fallback answer", "911" in r["reply"], r["reply"][:120])
 
     reset(concierge="raise")
     r = client.post("/api/chat", json={"message": "is the escort running?", "place_id": 1}).json()
-    check("model outage: chat answers with emergency numbers instead of failing", "432-4400" in r["reply"])
+    check("model outage: chat answers with emergency numbers instead of failing",
+          "couldn't reach" in r["reply"] and "432-4400" in r["reply"], r["reply"][:120])
 
 
 def test_budget(client: TestClient) -> None:
@@ -274,6 +299,19 @@ def test_budget(client: TestClient) -> None:
     conn.commit()
     r = client.post("/api/chat", json={"message": "is it safe near YCCI?", "place_id": 5}).json()
     check("rate limit: 9th AI call in a minute is refused", CALLS.get("concierge", 0) == 0 and "quickly" in r["reply"], r["reply"][:100])
+    conn.execute("DELETE FROM ai_runs WHERE user_id = ?", (uid,))
+    conn.commit()
+    # A burst: 8 runs still in progress aren't in ai_runs yet, but they must count (found by the stress test).
+    from contextlib import ExitStack
+    reset(concierge=reply())
+    with ExitStack() as held:
+        for _ in range(8):
+            held.enter_context(safety.ai_slot(conn, uid))
+        r = client.post("/api/chat", json={"message": "is it safe near YCCI?", "place_id": 5}).json()
+    check("rate limit: runs still in progress count (20 simultaneous chats can't slip through)",
+          CALLS.get("concierge", 0) == 0 and "quickly" in r["reply"], r["reply"][:100])
+    r = client.post("/api/chat", json={"message": "is it safe near YCCI?", "place_id": 5}).json()
+    check("rate limit: slots are released when runs finish", CALLS.get("concierge", 0) == 1 and not safety._in_flight, r["reply"][:100])
     conn.execute("DELETE FROM ai_runs WHERE user_id = ?", (uid,))
     conn.commit()
     conn.close()
@@ -390,7 +428,152 @@ def test_service_area_and_events() -> None:
           by.get("Gallery hours", {}).get("status") == "all_day" and titles.index("Gallery hours") > titles.index("Concert"))
     check("events: a venue with bad coordinates gets no map pin", by.get("Wrong-pin lecture", {}).get("lat", 0) is None)
     check("events: virtual and finished events are left out", "Online panel" not in titles and "Already over" not in titles)
+
+    # A stale copy is served at once while one background fetch runs (found by the stress test: 50 users waited on one fetch).
+    import threading
+    calls, release = [], threading.Event()
+    real_fetch = events._fetch
+    events._fetch = lambda: (calls.append(1), release.wait(5))
+    events._cache["at"] = _time.time() - events.CACHE_SECONDS - 1
+    t0 = _time.perf_counter()
+    first, second = events.refresh(), events.refresh()
+    waited = _time.perf_counter() - t0
+    release.set()
+    _time.sleep(0.2)
+    check("events: a stale copy is served instantly while one background refresh runs",
+          waited < 0.5 and len(calls) == 1 and bool(first["events"]) and not events._lock.locked(), f"{waited:.2f}s, {len(calls)} fetches")
+    events._fetch = real_fetch
     events._cache.update(at=0.0, events=[], error=None)
+
+
+def test_walks_maps_and_resources(client: TestClient) -> None:
+    import sqlite3 as _sqlite
+    import bluephones
+    import db as dbmod
+    import shuttle
+    from config import in_service_area
+    login(client, "ar2027", "Elm#City2027")
+    conn = connect()
+    ids = {r[0]: r[1] for r in conn.execute("SELECT name, id FROM places")}
+    conn.close()
+    gym, sml = ids["Payne Whitney Gym"], ids["Sterling Memorial Library"]
+
+    # Walk With Me from the phone's current location
+    w = client.post("/api/walks", json={"origin_lat": 41.31205, "origin_lng": -72.93050, "origin_place_id": gym,
+                                        "dest_place_id": sml, "minutes": 10}).json()
+    check("walk: 'Current location' starts from the phone's GPS",
+          w["origin"]["name"].startswith("Current location") and abs(w["origin"]["lat"] - 41.31205) < 1e-6, str(w.get("origin")))
+    w = client.post("/api/walks", json={"origin_lat": 40.7128, "origin_lng": -74.0060, "origin_place_id": gym,
+                                        "dest_place_id": sml, "minutes": 10}).json()
+    check("walk: GPS outside New Haven falls back to the chosen place", w["origin"]["name"] == "Payne Whitney Gym", str(w.get("origin")))
+    conn = connect()
+    s = conn.execute("SELECT lat, lng FROM places WHERE id = ?", (sml,)).fetchone()
+    conn.close()
+    r = client.post("/api/walks", json={"origin_lat": s[0], "origin_lng": s[1], "origin_place_id": gym,
+                                        "dest_place_id": sml, "minutes": 10})
+    check("walk: starting where you're going is refused", r.status_code == 400 and "already" in r.text, r.text[:80])
+    client.post(f"/api/walks/{w['id']}/cancel", json={})
+
+    # An old database gets the new walk columns
+    old = _sqlite.connect(":memory:")
+    old.execute("CREATE TABLE walks (id INTEGER PRIMARY KEY, user_id INTEGER, origin_place_id INTEGER, dest_place_id INTEGER, "
+                "started_at TEXT, eta TEXT, status TEXT, contacts_json TEXT, events_json TEXT, ended_at TEXT)")
+    dbmod.init_schema(old)
+    cols = {r[1] for r in old.execute("PRAGMA table_info(walks)")}
+    check("walk: databases from before this change are upgraded", {"origin_lat", "origin_lng", "origin_label"} <= cols)
+
+    # Blue phones
+    data = client.get("/api/blue-phones").json()
+    check("blue phones: about 500 phones, every one inside Yale's area",
+          data["count"] >= 450 and all(in_service_area(p["lat"], p["lng"]) for p in data["phones"]), str(data.get("count")))
+    conn = connect()
+    gate = conn.execute("SELECT lat, lng FROM places WHERE name = 'Old Campus (Phelps Gate)'").fetchone()
+    conn.close()
+    near = bluephones.nearest(gate[0], gate[1], 1)[0]  # Yale's safety page mentions a blue phone at Phelps Gate
+    check("blue phones: one is mapped within 60 m of Phelps Gate", near["meters"] <= 60, f"{near['meters']} m")
+
+    # Resources
+    names = [x["name"] for x in client.get("/api/resources").json()["resources"]]
+    check("resources: LiveSafe is gone; staff EAP, shuttle, and blue phones are there",
+          not any("LiveSafe" in n for n in names) and any("Employee Assistance" in n for n in names)
+          and "Yale Shuttle" in names and "Blue emergency phones" in names, str(names))
+
+    # Shuttle: route matching on canned data, and an outage never breaks the page (no network in this test)
+    saved = shuttle._get
+    for c in shuttle._cache.values():
+        c.update(at=0.0, data=None, error=None)
+    shuttle._eta.clear()
+
+    def down(path, params=None):
+        raise ConnectionError("offline")
+    shuttle._get = down
+    r = client.get("/api/shuttle").json()
+    check("shuttle: if Yale's feed is down, the app says so instead of failing", r["error"] and r["routes"] == [], str(r)[:120])
+    for c in shuttle._cache.values():
+        c.update(at=0.0, data=None, error=None)
+    canned = {
+        "routes_routes.php": [{"id": 10, "name": "Purple - West Campus", "description": "5:30am - 11:45pm, Daily", "color": "6F30A1",
+                               "active": True, "stops": [1, 2], "path": [41.2975, -72.9268, 41.2602, -72.9869]},
+                              {"id": 3, "name": "Red", "description": "7am - 6pm", "color": "FF0000", "active": True,
+                               "stops": [1, 3], "path": []}],
+        "routes_stops.php": [{"id": 1, "name": "Union Station (S)", "lat": 41.2973, "lon": -72.9265},
+                             {"id": 2, "name": "Building 800", "lat": 41.2610, "lon": -72.9860},
+                             {"id": 3, "name": "College / George", "lat": 41.3045, "lon": -72.9270}],
+        "routes_announcements.php": [], "routes_buses.php": [],
+        "routes_eta.php": {"etas": {"1": {"etas": [{"avg": 12, "bus_name": "#330", "route": 10}]}}},
+    }
+    shuttle._get = lambda path, params=None: canned[path]
+    conn = connect()
+    union = dict(zip(("lat", "lng"), conn.execute("SELECT lat, lng FROM places WHERE name = 'Union Station'").fetchone()))
+    west = dict(zip(("lat", "lng"), conn.execute("SELECT lat, lng FROM places WHERE name = 'Yale West Campus'").fetchone()))
+    conn.close()
+    opts = shuttle.options(union, west)["options"]
+    check("shuttle: Union Station to West Campus finds the Purple route and the next bus",
+          len(opts) == 1 and opts[0]["route"].startswith("Purple") and opts[0]["bus_in_min"] == 12, str(opts)[:160])
+
+    # Trip planner on a made-up square loop: route 1 drives it clockwise, route 2 the other way.
+    for c in shuttle._cache.values():
+        c.update(at=0.0, data=None, error=None)
+    shuttle._eta.clear()
+    shuttle._speed.clear()
+    P0, P1, P2, P3 = (41.300, -72.935), (41.300, -72.915), (41.315, -72.915), (41.315, -72.935)
+    flat = lambda *pts: [v for pt in pts for v in pt]
+    loop = {
+        "routes_routes.php": [
+            {"id": 1, "name": "Clockwise", "description": "all day", "color": "0000FF", "active": True,
+             "stops": [11, 12, 13, 14], "path": flat(P0, P1, P2, P3, P0)},
+            {"id": 2, "name": "Counter", "description": "all day", "color": "FF0000", "active": True,
+             "stops": [11, 14, 13, 12], "path": flat(P0, P3, P2, P1, P0)}],
+        "routes_stops.php": [{"id": 10 + k, "name": f"Corner {k}", "lat": pt[0], "lon": pt[1]} for k, pt in enumerate((P0, P1, P2, P3), 1)],
+        "routes_announcements.php": [],
+        "routes_buses.php": [{"id": 1, "name": "#1", "lat": P0[0], "lon": P0[1], "route": 1},
+                             {"id": 2, "name": "#2", "lat": P0[0], "lon": P0[1], "route": 2}],
+    }
+    arrivals = {12: [(1, 101, 5), (2, 202, 3)], 13: [(1, 101, 15), (2, 202, 30)], 11: [], 14: []}
+    def canned_loop(path, params=None):
+        if path == "routes_eta.php":
+            rows = [{"avg": m, "bus_id": b, "bus_name": f"#{b}", "route": r} for r, b, m in arrivals[int(params["stop"])]]
+            return {"etas": {str(params["stop"]): {"etas": rows}}}
+        return loop[path]
+    shuttle._get = canned_loop
+    here_pt, there_pt = {"lat": 41.3001, "lng": -72.9151}, {"lat": 41.3149, "lng": -72.9151}
+    plan = shuttle.plan(here_pt, there_pt)
+    first = plan["options"][0] if plan["options"] else {}
+    counter = next((o for o in plan["options"] if o["route"] == "Counter"), {})
+    check("trip planner: picks the bus going the right way, timed from live arrivals",
+          plan["recommend"] == "shuttle" and first.get("route") == "Clockwise" and first.get("ride_timing") == "live"
+          and first.get("ride_min") == 10, str({k: first.get(k) for k in ("route", "ride_min", "ride_timing", "total_min")}))
+    check("trip planner: a bus that loops the long way around is flagged and ranked lower",
+          counter.get("long_way_around") is True and counter.get("total_min", 0) > first.get("total_min", 999), str(counter.get("total_min")))
+    near = shuttle.plan(here_pt, {"lat": 41.3027, "lng": -72.9151})   # 300 m away
+    check("trip planner: for a short trip it says to walk", near["recommend"] == "walk", str(near.get("recommend")))
+    far = shuttle.plan(here_pt, {"lat": 41.3132, "lng": -72.9606})     # Yale Bowl: no stop nearby
+    check("trip planner: says so when no shuttle connects the two places", far["recommend"] == "none" and not far["options"],
+          str(far.get("recommend")))
+    shuttle._get = saved
+    for c in shuttle._cache.values():
+        c.update(at=0.0, data=None, error=None)
+    shuttle._eta.clear()
 
 
 def test_walk_escalation() -> None:
@@ -428,6 +611,7 @@ def main_() -> int:
         test_walk_escalation()
         test_community(client)
         test_service_area_and_events()
+        test_walks_maps_and_resources(client)
     passed = sum(ok for _, ok, _ in RESULTS)
     lines = [f"Bulldog Beacon offline safety tests: {passed}/{len(RESULTS)} passed (scripted model, 0 tokens)", ""]
     lines += [f"{'PASS' if ok else 'FAIL'}  {name}" + (f"  -- {d}" if d and not ok else "") for name, ok, d in RESULTS]

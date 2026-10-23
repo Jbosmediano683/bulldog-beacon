@@ -19,7 +19,7 @@ SEED_DIR = Path(__file__).resolve().parent / "data_seed"
 VERIFIED = "2026-10-22"
 
 RESOURCES = [
-    # name, category, phone, display, hours, who, description, source
+    # name, category, phone, display, hours, who, description, source[, verified on if not VERIFIED]
     ("Emergency: 911", "emergency", "911", "911", "24/7", "Anyone",
      "Immediate danger, fire, or a medical emergency. Yale College says to call 911 or Yale Police.",
      "https://college.yale.edu/life-at-yale/safety"),
@@ -33,8 +33,10 @@ RESOURCES = [
      "Door-to-door ride within campus borders at night.",
      "https://oiss.yale.edu/node/5101"),
     ("Blue emergency phones", "emergency", None, "Red button on any blue-light phone", "24/7", "Anyone",
-     "More than 500 campus phones with red buttons that connect straight to police, fire, or medical help.",
-     "https://college.yale.edu/life-at-yale/safety"),
+     "About 500 phones across campus, marked by a blue light. The red button connects straight to Yale Police for "
+     "police, fire, or medical help. Tap to see every phone on the map.",
+     "https://your.yale.edu/campus-essentials/community-safety/campus-safety-support/blue-phone-locations-on-campus",
+     "2026-10-23"),
     ("Yale Mental Health & Counseling", "mental_health", "2034320290", "(203) 432-0290", "Mon-Fri, 8:30 am to 5 pm", "Yale students",
      "Counseling and mental health care at Yale Health.",
      "https://college.yale.edu/life-at-yale/safety"),
@@ -47,15 +49,19 @@ RESOURCES = [
     ("Walden Peer Counseling", "mental_health", "2034328255", "(203) 432-TALK (8255)", "8 pm to 8 am on nights school is in session", "Yale undergraduates",
      "Anonymous, confidential student peer-support hotline.",
      "https://yalewell.yale.edu/walden-peer-counseling"),
+    ("Yale Employee Assistance Program (Optum)", "mental_health", "8664166586", "866-416-6586", "24/7 licensed therapists",
+     "Benefits-eligible Yale faculty and staff, postdocs, and their household members",
+     "Free, confidential counseling for employees (six free sessions per issue each year), run by Optum Emotional "
+     "Wellbeing Solutions.",
+     "https://your.yale.edu/youryale/2025-11-10-youre-not-alone", "2026-10-23"),
     ("SHARE Center", "sexual_misconduct", "2034322000", "(203) 432-2000", "24/7 hotline", "Yale community",
      "Sexual Harassment and Assault Response & Education: confidential counselors any time, day or night.",
      "https://sharecenter.yale.edu/"),
-    ("Yale Shuttle", "ride", None, "Live map in the Yale Shuttle app", "Until 1 am on weekdays", "Yale community",
-     "Free campus shuttle routes.",
-     "https://oiss.yale.edu/node/5101"),
-    ("LiveSafe (Yale's current safety app)", "app", None, "App Store / Google Play", "24/7", "Yale community",
-     "Yale's official safety app: tips to Yale PD, escort requests, and location sharing.",
-     "https://your.yale.edu/campus-essentials/community-safety/campus-safety-support/livesafe-app"),
+    ("Yale Shuttle", "ride", None, "Live shuttle map in Beacon", "5:30 am to midnight, 7 days (each route has its own hours)",
+     "Yale community",
+     "Free shuttles across campus, the medical school, West Campus, and the train stations. Tap to see the routes, "
+     "stops, and buses moving in real time.",
+     "https://your.yale.edu/campus-essentials/getting-around-campus/using-the-shuttle", "2026-10-23"),
 ]
 
 DEMO_USERS = [
@@ -160,14 +166,15 @@ def seed(conn: sqlite3.Connection, *, reset: bool = False) -> None:
     for p in places:
         conn.execute("INSERT OR REPLACE INTO places (id, name, kind, aliases_json, address, lat, lng) VALUES (?,?,?,?,?,?,?)",
                      (p["id"], p["name"], p["kind"], dumps(p["aliases"]), p["address"], p["lat"], p["lng"]))
+    # Verified resources are reference data too: rewrite them on every start so corrections reach old databases.
+    conn.execute("DELETE FROM resources")
+    for r in RESOURCES:
+        conn.execute("INSERT INTO resources (name, category, phone, phone_display, hours, who, description, source_url, verified_on) "
+                     "VALUES (?,?,?,?,?,?,?,?,?)", (*r[:8], r[8] if len(r) > 8 else VERIFIED))
     conn.commit()
     if conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]:
         return  # already seeded
     by_name = {p["name"]: p for p in places}
-
-    for r in RESOURCES:
-        conn.execute("INSERT INTO resources (name, category, phone, phone_display, hours, who, description, source_url, verified_on) "
-                     "VALUES (?,?,?,?,?,?,?,?,?)", (*r[:7], r[7], VERIFIED))
 
     for netid, pw, name, aff, unit, role, contacts, med in DEMO_USERS:
         conn.execute("INSERT INTO users (netid, name, affiliation, unit, role, password_hash, contacts_json, medical_note, demo, created_at) "

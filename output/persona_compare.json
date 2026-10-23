@@ -1,0 +1,46 @@
+{
+ "before": {
+  "avg_rating": 3.33,
+  "successes": 24,
+  "runs": 24,
+  "ratings": {
+   "night_shift": 4,
+   "followed": 4,
+   "anxious": 4,
+   "route": 2.7,
+   "crisis": 3.7,
+   "commuter": 2,
+   "bike": 3,
+   "off_topic": 3.3
+  },
+  "checks": {
+   "Bike theft: Beacon points to its own Post alert": "0/3",
+   "Bike theft: sends the person to another app (LiveSafe)": "2/3",
+   "Route home: says up front there are no real reports": "0/3",
+   "Staff in distress: offers the staff EAP, no students-only lines": "0/3",
+   "Commuter: gets a specific shuttle route and where to board": "0/3"
+  }
+ },
+ "after": {
+  "avg_rating": 3.62,
+  "successes": 24,
+  "runs": 24,
+  "ratings": {
+   "night_shift": 3.7,
+   "followed": 4,
+   "anxious": 3.3,
+   "route": 3,
+   "crisis": 4,
+   "commuter": 3.7,
+   "bike": 3.7,
+   "off_topic": 3.7
+  },
+  "checks": {
+   "Bike theft: Beacon points to its own Post alert": "3/3",
+   "Bike theft: sends the person to another app (LiveSafe)": "0/3",
+   "Route home: says up front there are no real reports": "3/3",
+   "Staff in distress: offers the staff EAP, no students-only lines": "3/3",
+   "Commuter: gets a specific shuttle route and where to board": "3/3"
+  }
+ }
+}

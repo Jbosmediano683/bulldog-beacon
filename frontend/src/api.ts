@@ -146,13 +146,14 @@ export type PostResult = {
 };
 
 export type Action = {
-  kind: "start_walk" | "call" | "request_escort" | "open_map" | "open_resources";
+  kind: "start_walk" | "call" | "request_escort" | "open_map" | "open_resources" | "post_alert" | "open_shuttle_map" | "open_blue_phone_map";
   label: string;
   origin_place_id?: number | null;
   dest_place_id?: number | null;
   minutes?: number | null;
   phone?: string | null;
   incident_id?: number | null;
+  category?: string | null;
 };
 
 export type ChatMessage = {
@@ -164,6 +165,39 @@ export type ChatMessage = {
   guards?: string[];
   run?: RunUsage | null;
   pending?: boolean;
+};
+
+export type BluePhones = {
+  source: string;
+  retrieved: string;
+  method: string;
+  count: number;
+  phones: { id: number; lat: number; lng: number; area: string }[];
+};
+
+export type ShuttleRoute = {
+  id: number; name: string; short_name: string; hours: string; color: string; running_now: boolean;
+  stops: number[]; path: [number, number][];
+};
+export type ShuttleStop = { id: number; name: string; lat: number; lng: number };
+export type ShuttleSystem = {
+  routes: ShuttleRoute[]; stops: ShuttleStop[]; announcements: { title: string; message: string }[];
+  hours: string; source: string; error: string | null;
+};
+export type ShuttleBus = { id: number; name: string; lat: number; lng: number; heading: number; route: number | null };
+export type ShuttleEta = { route: number | null; bus: string; minutes: number };
+export type ShuttleStopRef = { stop_id: number; name: string; lat: number; lng: number; walk_min: number; walk_m: number };
+export type ShuttleOption = {
+  route_id: number; route: string; color: string; hours: string; board: ShuttleStopRef; alight: ShuttleStopRef;
+  bus: string | null; bus_in_min: number; bus_timing: "live" | "estimated"; ride_min: number; ride_km: number;
+  ride_timing: "live" | "measured" | "typical"; stops_on_ride: number; long_way_around: boolean; total_min: number;
+  arrive_at: string; path: [number, number][];
+};
+export type ShuttlePlan = {
+  origin: { lat: number; lng: number; name: string; gps: boolean };
+  dest: { id: number; name: string; lat: number; lng: number };
+  walk_only_min: number; walk_only_m: number; options: ShuttleOption[]; recommend?: "shuttle" | "walk" | "none";
+  not_running_now?: { route: string; hours: string }[]; announcements: { title: string; message: string }[]; error: string | null;
 };
 
 export type Resource = {

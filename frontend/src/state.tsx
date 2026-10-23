@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { api, type Place, type RunUsage, type User } from "./api";
 
-export type Tab = "home" | "community" | "alerts" | "ask" | "walk" | "resources" | "dispatch" | "usage";
+export type Tab = "home" | "community" | "alerts" | "ask" | "walk" | "resources" | "dispatch" | "usage" | "bluephones" | "shuttle";
 export type MapLayer = "all" | "safety" | "events";
 
 export type ActivityItem = {
@@ -22,7 +22,7 @@ type AppState = {
   here: Place | undefined;
   setHereId: (id: number) => void;
   tab: Tab;
-  go: (tab: Tab, opts?: { incidentId?: number; eventId?: number; walkDraft?: WalkDraft; chatPrompt?: string; mapLayer?: MapLayer }) => void;
+  go: (tab: Tab, opts?: { incidentId?: number; eventId?: number; walkDraft?: WalkDraft; chatPrompt?: string; mapLayer?: MapLayer; compose?: ComposeDraft }) => void;
   mapLayer: MapLayer;
   setMapLayer: (layer: MapLayer) => void;
   focusIncidentId: number | null;
@@ -33,6 +33,8 @@ type AppState = {
   clearWalkDraft: () => void;
   chatPrompt: string | null;
   clearChatPrompt: () => void;
+  composeDraft: ComposeDraft | null;
+  clearComposeDraft: () => void;
   activity: ActivityItem[];
   log: (item: Omit<ActivityItem, "id" | "at">) => void;
   sosId: number | null;
@@ -42,6 +44,7 @@ type AppState = {
 };
 
 export type WalkDraft = { origin_place_id?: number | null; dest_place_id?: number | null; minutes?: number | null };
+export type ComposeDraft = { category?: string };  // the chat's "Post an alert" button opens the composer
 
 const Ctx = createContext<AppState | null>(null);
 
@@ -71,6 +74,7 @@ export function AppProvider({ user, setUser, children }: { user: User; setUser: 
   const [focusEventId, setFocusEvent] = useState<number | null>(null);
   const [walkDraft, setWalkDraft] = useState<WalkDraft | null>(null);
   const [chatPrompt, setChatPrompt] = useState<string | null>(null);
+  const [composeDraft, setComposeDraft] = useState<ComposeDraft | null>(null);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [sosId, setSosId] = useState<number | null>(null);
   const [toastText, setToastText] = useState<string | null>(null);
@@ -98,6 +102,7 @@ export function AppProvider({ user, setUser, children }: { user: User; setUser: 
     if (opts?.eventId) setFocusEvent(opts.eventId);
     if (opts?.walkDraft) setWalkDraft(opts.walkDraft);
     if (opts?.chatPrompt) setChatPrompt(opts.chatPrompt);
+    if (opts?.compose) setComposeDraft(opts.compose);
     if (opts?.mapLayer) setMapLayer(opts.mapLayer);
     else if (opts?.incidentId) setMapLayer("all");
     setTab(t);
@@ -117,10 +122,10 @@ export function AppProvider({ user, setUser, children }: { user: User; setUser: 
     () => ({
       user, setUser, places, placeById, here: placeById(hereId), setHereId, tab, go,
       focusIncidentId, clearFocus: () => setFocus(null), focusEventId, clearFocusEvent: () => setFocusEvent(null), walkDraft, clearWalkDraft: () => setWalkDraft(null),
-      chatPrompt, clearChatPrompt: () => setChatPrompt(null), activity, log, sosId, setSosId, toast, toastText,
+      chatPrompt, clearChatPrompt: () => setChatPrompt(null), composeDraft, clearComposeDraft: () => setComposeDraft(null), activity, log, sosId, setSosId, toast, toastText,
       mapLayer, setMapLayer,
     }),
-    [user, setUser, places, placeById, hereId, setHereId, tab, go, focusIncidentId, focusEventId, walkDraft, chatPrompt, activity, log, sosId, toast, toastText, mapLayer],
+    [user, setUser, places, placeById, hereId, setHereId, tab, go, focusIncidentId, focusEventId, walkDraft, chatPrompt, composeDraft, activity, log, sosId, toast, toastText, mapLayer],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

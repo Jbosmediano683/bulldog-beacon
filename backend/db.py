@@ -85,6 +85,9 @@ CREATE TABLE IF NOT EXISTS walks (
     user_id INTEGER NOT NULL REFERENCES users(id),
     origin_place_id INTEGER REFERENCES places(id),
     dest_place_id INTEGER REFERENCES places(id),
+    origin_lat REAL,                   -- set when the walk starts from the phone's current location
+    origin_lng REAL,
+    origin_label TEXT,
     started_at TEXT NOT NULL,
     eta TEXT NOT NULL,
     status TEXT NOT NULL,              -- active / arrived / overdue / escalated / cancelled
@@ -188,6 +191,11 @@ def connect() -> sqlite3.Connection:
 
 def init_schema(conn: sqlite3.Connection) -> None:
     conn.executescript(SCHEMA)
+    # Databases created before walks could start from the current location get the new columns.
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(walks)")}
+    for col, kind in (("origin_lat", "REAL"), ("origin_lng", "REAL"), ("origin_label", "TEXT")):
+        if col not in cols:
+            conn.execute(f"ALTER TABLE walks ADD COLUMN {col} {kind}")
     conn.commit()
 
 

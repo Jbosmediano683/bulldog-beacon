@@ -16,8 +16,10 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 import auth
+import bluephones
 import events
 import services
+import shuttle
 from config import (GLOBAL_DAILY_TOKEN_CAP, MODEL_NAME, PRICE_PER_MTOK, PRICE_SOURCE, STATIC_DIR,
                     USER_DAILY_TOKEN_CAP, env_file_used)
 from db import connect, dumps, iso, loads, now_iso, now_utc, one, rows
@@ -150,6 +152,43 @@ def resources(_: dict = Depends(current_user), conn: sqlite3.Connection = Depend
 def yale_events(hours: int = 12, _: dict = Depends(current_user)) -> dict[str, Any]:
     """Happening at Yale: real events from events.yale.edu (cached 15 minutes)."""
     return events.happening(max(1, min(hours, 36)))
+
+
+@app.get("/api/blue-phones")
+def blue_phones(_: dict = Depends(current_user)) -> dict[str, Any]:
+    """Yale's blue emergency phones, traced from Yale's own blue-phone map."""
+    return bluephones.load()
+
+
+@app.get("/api/shuttle")
+def shuttle_system(_: dict = Depends(current_user)) -> dict[str, Any]:
+    """Yale Shuttle routes, stops, and service announcements (from Yale's real-time shuttle system)."""
+    return shuttle.system()
+
+
+@app.get("/api/shuttle/live")
+def shuttle_live(_: dict = Depends(current_user)) -> dict[str, Any]:
+    return shuttle.live()
+
+
+@app.get("/api/shuttle/plan")
+def shuttle_plan(dest_place_id: int, place_id: int | None = None, lat: float | None = None, lng: float | None = None,
+                 _: dict = Depends(current_user), conn: sqlite3.Connection = Depends(get_conn)) -> dict[str, Any]:
+    """Fastest way to a Yale place from where you are: one shuttle ride or walking. Your location is the phone's GPS
+    when it's in New Haven, otherwise the place you chose."""
+    dest = services.place_by_id(conn, dest_place_id)
+    if not dest:
+        raise HTTPException(404, "Unknown destination.")
+    start, s_lat, s_lng = services.resolve_location(conn, place_id, lat, lng)
+    used_gps = lat is not None and (s_lat, s_lng) == (lat, lng)
+    origin = {"lat": s_lat, "lng": s_lng, "name": "Your location" if used_gps else start["name"], "gps": used_gps}
+    return {"origin": origin, "dest": {"id": dest["id"], "name": dest["name"], "lat": dest["lat"], "lng": dest["lng"]},
+            **shuttle.plan(origin, dest)}
+
+
+@app.get("/api/shuttle/eta")
+def shuttle_eta(stop: int, _: dict = Depends(current_user)) -> list[dict[str, Any]]:
+    return shuttle.etas(stop)
 
 
 @app.get("/api/incidents")

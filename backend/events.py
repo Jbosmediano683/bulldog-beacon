@@ -113,23 +113,48 @@ def _normalize(raw: dict[str, Any], today: datetime) -> list[dict[str, Any]]:
     return out
 
 
+def _fresh() -> bool:
+    return time.time() - _cache["at"] < CACHE_SECONDS and bool(_cache["events"] or _cache["error"])
+
+
+def _fetch() -> None:
+    """Fetch the calendar into the cache. Call only while holding _lock."""
+    today = datetime.now(TZ)
+    try:
+        resp = httpx.get(FEED, params={"days": 2, "pp": 100}, timeout=8,
+                         headers={"User-Agent": "BulldogBeacon/1.0 (Yale MGT 409 class project)"})
+        resp.raise_for_status()
+        events: list[dict[str, Any]] = []
+        for raw in resp.json().get("events", []):
+            events += _normalize(raw, today)
+        _cache.update(at=time.time(), events=events, error=None)
+    except Exception as exc:  # keep serving the last good copy
+        _cache.update(at=time.time(), error=f"Couldn't reach events.yale.edu ({type(exc).__name__})")
+
+
+def _fetch_in_background() -> None:
+    try:
+        _fetch()
+    finally:
+        _lock.release()
+
+
 def refresh(force: bool = False) -> dict[str, Any]:
-    """Return the cached calendar, fetching it again when it's older than 15 minutes."""
-    with _lock:
-        if not force and time.time() - _cache["at"] < CACHE_SECONDS and (_cache["events"] or _cache["error"]):
-            return _cache
-        today = datetime.now(TZ)
-        try:
-            resp = httpx.get(FEED, params={"days": 2, "pp": 100}, timeout=8,
-                             headers={"User-Agent": "BulldogBeacon/1.0 (Yale MGT 409 class project)"})
-            resp.raise_for_status()
-            events: list[dict[str, Any]] = []
-            for raw in resp.json().get("events", []):
-                events += _normalize(raw, today)
-            _cache.update(at=time.time(), events=events, error=None)
-        except Exception as exc:  # keep serving the last good copy
-            _cache.update(at=time.time(), error=f"Couldn't reach events.yale.edu ({type(exc).__name__})")
+    """Return the cached calendar, fetching it again when it's older than 15 minutes.
+
+    Once there is a copy, a stale one is served at once while a background thread fetches the new one,
+    so nobody waits on events.yale.edu (the stress test showed 50 users queuing behind one slow fetch).
+    Only the very first fetch, which run.py starts at launch, makes callers wait."""
+    if _fresh() and not force:
         return _cache
+    if _cache["events"] and not force:
+        if _lock.acquire(blocking=False):
+            threading.Thread(target=_fetch_in_background, daemon=True).start()
+        return _cache
+    with _lock:
+        if force or not _fresh():
+            _fetch()
+    return _cache
 
 
 def happening(hours_ahead: int = 12, now: datetime | None = None) -> dict[str, Any]:

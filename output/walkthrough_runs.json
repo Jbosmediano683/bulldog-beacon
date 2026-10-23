@@ -1,0 +1,251 @@
+{
+ "runs": [
+  {
+   "id": 1,
+   "created_at": "2026-10-23T14:52:56Z",
+   "user_id": 1,
+   "agent": "moderator",
+   "ref": "post:13",
+   "model": "gpt-6-luna",
+   "status": "ok",
+   "requests": 1,
+   "tool_calls": 0,
+   "input_tokens": 1899,
+   "cached_tokens": 1677,
+   "output_tokens": 110,
+   "reasoning_tokens": 0,
+   "gateway_cache_hits": 0,
+   "latency_ms": 5627,
+   "cost_usd": 9.397e-05,
+   "error": null,
+   "trace": []
+  },
+  {
+   "id": 2,
+   "created_at": "2026-10-23T14:53:22Z",
+   "user_id": 2,
+   "agent": "concierge",
+   "ref": "chat",
+   "model": "gpt-6-luna",
+   "status": "ok",
+   "requests": 3,
+   "tool_calls": 2,
+   "input_tokens": 6063,
+   "cached_tokens": 4847,
+   "output_tokens": 258,
+   "reasoning_tokens": 0,
+   "gateway_cache_hits": 0,
+   "latency_ms": 6650,
+   "cost_usd": 0.00029907,
+   "error": null,
+   "trace": [
+    {
+     "type": "tool_call",
+     "tool": "find_place",
+     "args": {
+      "query": "Temple Street Garage"
+     }
+    },
+    {
+     "type": "tool_result",
+     "tool": "find_place",
+     "preview": "{\"matches\":[{\"id\":12,\"name\":\"Temple Street Garage\",\"kind\":\"parking\",\"address\":\"Temple Street Garage, New Haven, CT\",\"distance_from_user_m\":734},{\"id\":11,\"name\":\"Air Rights Garage\",\"kind\":\"parking\",\"address\":\"Air Rights Garage, New Haven, CT\",\"distance_from_user_m\":961},{\"id\":24,\"name\":\"Chapel-York Garage\",\"kind\":\"parking\",\"address\":\"Chapel Street & York Street, New Haven, CT\",\"distance_from_user_m\":1216}]}"
+    },
+    {
+     "type": "tool_call",
+     "tool": "route_check",
+     "args": {
+      "origin_place_id": 5,
+      "dest_place_id": 12,
+      "hours": 12
+     }
+    },
+    {
+     "type": "tool_result",
+     "tool": "route_check",
+     "preview": "{\"from\":\"Yale Center for Clinical Investigation (YCCI)\",\"to\":\"Temple Street Garage\",\"walk_estimate_min\":12,\"distance_m\":954,\"incidents_on_route\":[{\"id\":1,\"title\":\"Car break-ins, Temple Street Garage (upper levels)\",\"category\":\"vehicle_break_in\",\"severity\":\"warning\",\"reports\":2,\"last_report_minutes_ago\":140,\"distance_m\":0,\"demo\":true,\"summary\":\"<community_report>Two separate reports of smashed car windows on the upper levels in the last few hours. No one was hurt and no suspect was seen.</community_report>\",\"advice\":\"<community_report>Keep bags and electronics out of sight. Walking to a car the ..."
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "created_at": "2026-10-23T14:53:30Z",
+   "user_id": 2,
+   "agent": "moderator",
+   "ref": "post:14",
+   "model": "gpt-6-luna",
+   "status": "ok",
+   "requests": 1,
+   "tool_calls": 0,
+   "input_tokens": 1910,
+   "cached_tokens": 1677,
+   "output_tokens": 153,
+   "reasoning_tokens": 0,
+   "gateway_cache_hits": 0,
+   "latency_ms": 1907,
+   "cost_usd": 0.00011657,
+   "error": null,
+   "trace": []
+  },
+  {
+   "id": 4,
+   "created_at": "2026-10-23T14:53:32Z",
+   "user_id": 2,
+   "agent": "corroborator",
+   "ref": "post:14",
+   "model": "gpt-6-luna",
+   "status": "ok",
+   "requests": 1,
+   "tool_calls": 0,
+   "input_tokens": 822,
+   "cached_tokens": 0,
+   "output_tokens": 126,
+   "reasoning_tokens": 0,
+   "gateway_cache_hits": 0,
+   "latency_ms": 1639,
+   "cost_usd": 0.0001452,
+   "error": null,
+   "trace": []
+  },
+  {
+   "id": 5,
+   "created_at": "2026-10-23T14:54:05Z",
+   "user_id": 2,
+   "agent": "moderator",
+   "ref": "comment:7",
+   "model": "gpt-6-luna",
+   "status": "ok",
+   "requests": 1,
+   "tool_calls": 0,
+   "input_tokens": 1931,
+   "cached_tokens": 1677,
+   "output_tokens": 70,
+   "reasoning_tokens": 0,
+   "gateway_cache_hits": 0,
+   "latency_ms": 1432,
+   "cost_usd": 7.717e-05,
+   "error": null,
+   "trace": []
+  },
+  {
+   "id": 6,
+   "created_at": "2026-10-23T14:54:10Z",
+   "user_id": 2,
+   "agent": "moderator",
+   "ref": "comment:8",
+   "model": "gpt-6-luna",
+   "status": "ok",
+   "requests": 1,
+   "tool_calls": 0,
+   "input_tokens": 1923,
+   "cached_tokens": 1677,
+   "output_tokens": 86,
+   "reasoning_tokens": 0,
+   "gateway_cache_hits": 0,
+   "latency_ms": 2014,
+   "cost_usd": 8.437e-05,
+   "error": null,
+   "trace": []
+  },
+  {
+   "id": 7,
+   "created_at": "2026-10-23T14:55:34Z",
+   "user_id": 2,
+   "agent": "responder",
+   "ref": "sos:1",
+   "model": "gpt-6-luna",
+   "status": "ok",
+   "requests": 1,
+   "tool_calls": 0,
+   "input_tokens": 781,
+   "cached_tokens": 0,
+   "output_tokens": 167,
+   "reasoning_tokens": 0,
+   "gateway_cache_hits": 0,
+   "latency_ms": 4614,
+   "cost_usd": 0.0001616,
+   "error": null,
+   "trace": []
+  }
+ ],
+ "posts": [
+  {
+   "id": 13,
+   "raw_text": "Someone in a black jacket was trying car door handles on level 2 of the Temple Street garage around 10:30. I yelled and he walked off toward Crown St.",
+   "text": "Someone in a black jacket was trying car door handles on level 2 of the Temple Street garage around 10:30. I yelled, and he walked off toward Crown St.",
+   "status": "published",
+   "moderation_json": "{\"decision\": \"publish\", \"issues\": [], \"category\": \"suspicious_activity\", \"severity\": \"caution\", \"published_text\": \"Someone in a black jacket was trying car door handles on level 2 of the Temple Street garage around 10:30. I yelled, and he walked off toward Crown St.\", \"title\": \"Someone tried car door handles in Temple Street Garage\", \"advice\": \"Make sure your vehicle is locked, and report any attempted break-in to Yale Police.\", \"note_to_author\": \"\", \"layer\": \"agent\", \"guards\": []}",
+   "incident_id": 10
+  },
+  {
+   "id": 14,
+   "raw_text": "Hispanic guy in a black jacket was pulling on car door handles on level 2 of the Temple Street garage around 10:45, then walked toward Crown St. His plate was CT 7KX-219.",
+   "text": "Someone was pulling on car door handles on level 2 of the Temple Street Garage around 10:45 AM, then walked toward Crown Street. They wore a black jacket.",
+   "status": "revised",
+   "moderation_json": "{\"decision\": \"revise\", \"issues\": [\"profiling\", \"personal_info\"], \"category\": \"suspicious_activity\", \"severity\": \"caution\", \"published_text\": \"Someone was pulling on car door handles on level 2 of the Temple Street Garage around 10:45 AM, then walked toward Crown Street. They wore a black jacket.\", \"title\": \"Person tried car door handles at Temple Street Garage\", \"advice\": \"Check that your vehicle is locked and report any damage or missing items to Yale Police.\", \"note_to_author\": \"I removed the ethnicity descriptor because the behavior is what matters, and removed the license plate to protect privacy. Please share plate details with Yale Police at (203) 432-4400.\", \"layer\": \"agent\", \"guards\": []}",
+   "incident_id": 10
+  }
+ ],
+ "incidents": [
+  {
+   "id": 10,
+   "title": "Person tried car door handles at Temple Street Garage",
+   "summary": "Two separate reports describe someone in a black jacket trying car door handles on level 2 of the Temple Street Garage around 10:30–10:45 AM, then walking toward Crown Street.",
+   "advice": "Keep valuables out of sight and report any attempted break-in to Yale Police.",
+   "category": "suspicious_activity",
+   "severity": "caution",
+   "place_id": 12,
+   "lat": 41.304111,
+   "lng": -72.92844,
+   "report_count": 2,
+   "first_reported": "2026-10-23T14:52:51Z",
+   "last_reported": "2026-10-23T14:53:28Z",
+   "status": "active",
+   "demo": 0
+  }
+ ],
+ "comments": [
+  {
+   "id": 7,
+   "raw_text": "Saw someone trying doors on level 3 too, around 10:50. I told the Yale Security officer at the entrance.",
+   "text": "Saw someone trying doors on level 3 too, around 10:50. I told the Yale Security officer at the entrance.",
+   "status": "published",
+   "moderation_json": "{\"decision\": \"publish\", \"issues\": [], \"category\": \"suspicious_activity\", \"severity\": \"caution\", \"published_text\": \"Saw someone trying doors on level 3 too, around 10:50. I told the Yale Security officer at the entrance.\", \"title\": \"\", \"advice\": \"\", \"note_to_author\": \"\", \"layer\": \"agent\", \"guards\": []}"
+  },
+  {
+   "id": 8,
+   "raw_text": "It's probably one of those homeless guys from the Green, they should all be locked up.",
+   "text": "",
+   "status": "blocked",
+   "moderation_json": "{\"decision\": \"block\", \"issues\": [\"profiling\", \"harassment_or_threat\"], \"category\": \"suspicious_activity\", \"severity\": \"caution\", \"published_text\": \"\", \"title\": \"\", \"advice\": \"\", \"note_to_author\": \"We can’t publish a comment that targets people based on homelessness or calls for them to be imprisoned. Please focus on specific observed behavior rather than a group.\", \"layer\": \"agent\", \"guards\": []}"
+  }
+ ],
+ "sos": [
+  {
+   "id": 1,
+   "user_id": 2,
+   "created_at": "2026-10-23T14:55:29Z",
+   "lat": 41.297508,
+   "lng": -72.928378,
+   "place_label": "Yale Center for Clinical Investigation (YCCI)",
+   "note": "Someone followed me from the garage stairwell, I'm back inside the YCCI lobby",
+   "status": "open",
+   "brief_json": "{\"headline\": \"Person followed caller; caller is inside YCCI lobby\", \"nature\": \"being_followed\", \"threat_present\": \"unknown\", \"injuries\": \"unknown\", \"caller\": \"Jordan Lee (demo), staff, Yale Center for Clinical Investigation; mild asthma, carries an inhaler.\", \"location\": \"Yale Center for Clinical Investigation (YCCI), 41.29751, -72.92838\", \"recommended_units\": [\"yale_pd\"], \"key_facts\": [\"Caller says someone followed them from the garage stairwell.\", \"Caller says they are back inside the YCCI lobby.\"], \"ask_caller\": [\"Are you safe right now, and is the person still nearby?\", \"Are you injured or having trouble breathing?\", \"Can you describe the person and say which way they went?\"]}",
+   "brief_status": "ready",
+   "contacts_notified_json": "[{\"name\": \"Partner (demo)\", \"phone\": \"555-0102\"}, {\"name\": \"Sister (demo)\", \"phone\": \"555-0103\"}]",
+   "timeline_json": "[{\"t\": \"2026-10-23T14:55:29Z\", \"event\": \"SOS pressed\"}, {\"t\": \"2026-10-23T14:55:29Z\", \"event\": \"Alert and live location sent to Yale PD dispatch (simulated console)\"}, {\"t\": \"2026-10-23T14:55:29Z\", \"event\": \"Trusted contacts notified (simulated): Partner (demo), Sister (demo)\"}, {\"t\": \"2026-10-23T14:55:29Z\", \"event\": \"Caller added a note for responders\"}, {\"t\": \"2026-10-23T14:55:34Z\", \"event\": \"AI responder brief ready (verify with caller)\"}]"
+  }
+ ],
+ "chat": [
+  {
+   "role": "user",
+   "content": "I'm finishing my night shift at YCCI around 11. Is it OK to walk to the Temple Street Garage?",
+   "meta_json": "{}"
+  },
+  {
+   "role": "assistant",
+   "content": "The route is about a 12-minute walk. The route check found one current report: “Someone tried car door handles in Temple Street Garage,” reported just now (not a demo report). It also found a dark-sidewalk hazard near YCCI reported 95 minutes ago (demo report). Since you’ll be walking around 11 PM, consider requesting Yale Security’s walking escort, which is listed as open 24/7, or use Walk With Me and stay on well-lit, populated routes. I can’t guarantee the walk is safe.",
+   "meta_json": "{\"actions\": [{\"kind\": \"request_escort\", \"label\": \"Request walking escort\", \"origin_place_id\": 5, \"dest_place_id\": 12, \"minutes\": null, \"phone\": null, \"incident_id\": null}, {\"kind\": \"start_walk\", \"label\": \"Start Walk With Me\", \"origin_place_id\": 5, \"dest_place_id\": 12, \"minutes\": 15, \"phone\": null, \"incident_id\": null}, {\"kind\": \"call\", \"label\": \"Call Yale Security\", \"origin_place_id\": null, \"dest_place_id\": null, \"minutes\": null, \"phone\": \"2037855555\", \"incident_id\": null}], \"cited\": [10, 3], \"guards\": [], \"run\": {\"run_id\": 2, \"status\": \"ok\", \"requests\": 3, \"tool_calls\": 2, \"input_tokens\": 6063, \"cached_tokens\": 4847, \"output_tokens\": 258, \"reasoning_tokens\": 0, \"gateway_cache_hits\": 0, \"latency_ms\": 6650, \"cost_usd\": 0.00029907, \"trace\": [{\"type\": \"tool_call\", \"tool\": \"find_place\", \"args\": {\"query\": \"Temple Street Garage\"}}, {\"type\": \"tool_result\", \"tool\": \"find_place\", \"preview\": \"{\\\"matches\\\":[{\\\"id\\\":12,\\\"name\\\":\\\"Temple Street Garage\\\",\\\"kind\\\":\\\"parking\\\",\\\"address\\\":\\\"Temple Street Garage, New Haven, CT\\\",\\\"distance_from_user_m\\\":734},{\\\"id\\\":11,\\\"name\\\":\\\"Air Rights Garage\\\",\\\"kind\\\":\\\"parking\\\",\\\"address\\\":\\\"Air Rights Garage, New Haven, CT\\\",\\\"distance_from_user_m\\\":961},{\\\"id\\\":24,\\\"name\\\":\\\"Chapel-York Garage\\\",\\\"kind\\\":\\\"parking\\\",\\\"address\\\":\\\"Chapel Street & York Street, New Haven, CT\\\",\\\"distance_from_user_m\\\":1216}]}\"}, {\"type\": \"tool_call\", \"tool\": \"route_check\", \"args\": {\"origin_place_id\": 5, \"dest_place_id\": 12, \"hours\": 12}}, {\"type\": \"tool_result\", \"tool\": \"route_check\", \"preview\": \"{\\\"from\\\":\\\"Yale Center for Clinical Investigation (YCCI)\\\",\\\"to\\\":\\\"Temple Street Garage\\\",\\\"walk_estimate_min\\\":12,\\\"distance_m\\\":954,\\\"incidents_on_route\\\":[{\\\"id\\\":1,\\\"title\\\":\\\"Car break-ins, Temple Street Garage (upper levels)\\\",\\\"category\\\":\\\"vehicle_break_in\\\",\\\"severity\\\":\\\"warning\\\",\\\"reports\\\":2,\\\"last_report_minutes_ago\\\":140,\\\"distance_m\\\":0,\\\"demo\\\":true,\\\"summary\\\":\\\"<community_report>Two separate reports of smashed car windows on the upper levels in the last few hours. No one was hurt and no suspect was seen.</community_report>\\\",\\\"advice\\\":\\\"<community_report>Keep bags and electronics out of sight. Walking to a car the ...\"}]}}"
+  }
+ ]
+}

@@ -1,7 +1,7 @@
 """Shared runtime for Beacon's four agents.
 
 Every model call goes through `run_logged`, which:
-1. checks the rate limit and the daily token budgets (safety.check_ai_budget),
+1. checks the rate limit and the daily token budgets (safety.ai_slot),
 2. runs the PydanticAI agent with per-run UsageLimits and a timeout,
 3. records tokens (input, cached input, output, reasoning), latency, cost,
    Portkey gateway cache hits, and the tool-call trace in the ai_runs table.
@@ -28,7 +28,7 @@ from pydantic_ai.usage import RunUsage, UsageLimits
 
 from config import MODEL_NAME, MODEL_TIMEOUT_S, PORTKEY_BASE_URL, PRICE_PER_MTOK, PROMPTS_DIR
 from db import dumps, now_iso
-from safety import check_ai_budget
+from safety import ai_slot
 
 os.environ.setdefault("PYDANTIC_AI_NO_BANNER", "1")
 
@@ -142,27 +142,26 @@ async def run_logged(
     Raises safety.LimitExceeded before any model call if a cap is reached, and
     AgentUnavailable if the run fails; the caller decides the safe fallback.
     """
-    check_ai_budget(conn, user_id)
-
     usage = RunUsage()
     gateway: list[str] = []
-    token = _gateway_statuses.set(gateway)
-    started = time.perf_counter()
     status, error, result = "ok", None, None
-    try:
-        result = await asyncio.wait_for(
-            agent.run(prompt, deps=deps, usage=usage, usage_limits=limits, model=get_model(),
-                      message_history=message_history, model_settings=model_settings),
-            timeout=timeout_s,
-        )
-    except UsageLimitExceeded as exc:
-        status, error = "limit_stopped", str(exc)
-    except asyncio.TimeoutError:
-        status, error = "timeout", f"No answer within {timeout_s:.0f} s"
-    except Exception as exc:  # network, provider content filter, bad output after retries
-        status, error = "error", f"{type(exc).__name__}: {str(exc)[:1200]}"
-    finally:
-        _gateway_statuses.reset(token)
+    with ai_slot(conn, user_id):  # raises LimitExceeded before any model call
+        token = _gateway_statuses.set(gateway)
+        started = time.perf_counter()
+        try:
+            result = await asyncio.wait_for(
+                agent.run(prompt, deps=deps, usage=usage, usage_limits=limits, model=get_model(),
+                          message_history=message_history, model_settings=model_settings),
+                timeout=timeout_s,
+            )
+        except UsageLimitExceeded as exc:
+            status, error = "limit_stopped", str(exc)
+        except asyncio.TimeoutError:
+            status, error = "timeout", f"No answer within {timeout_s:.0f} s"
+        except Exception as exc:  # network, provider content filter, bad output after retries
+            status, error = "error", f"{type(exc).__name__}: {str(exc)[:1200]}"
+        finally:
+            _gateway_statuses.reset(token)
     latency_ms = int((time.perf_counter() - started) * 1000)
 
     trace = _trace(result.all_messages()) if result is not None else []

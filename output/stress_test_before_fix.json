@@ -1,0 +1,243 @@
+{
+ "phases": {
+  "A": {
+   "users": 50,
+   "seconds": 17.4
+  },
+  "B5": {
+   "users": 5,
+   "seconds": 23.9
+  },
+  "B15": {
+   "users": 15,
+   "seconds": 14.0
+  },
+  "B30": {
+   "users": 30,
+   "seconds": 41.9
+  }
+ },
+ "ai_notes": {
+  "chats": 50,
+  "chat_fallbacks": 0,
+  "chat_with_action": 39,
+  "post_status": {
+   "published": 37,
+   "revised": 13
+  },
+  "comment_status": {
+   "published": 50
+  }
+ },
+ "abuse": {
+  "sent": 20,
+  "answered_by_ai": 20,
+  "refused_by_rate_limit": 0
+ },
+ "model_calls": {
+  "runs": 200,
+  "statuses": {
+   "ok": 200
+  },
+  "tokens": 603879,
+  "cost_usd": 0.02833,
+  "p50_latency_s": 2.55,
+  "p95_latency_s": 12.4
+ },
+ "server_error_lines": [],
+ "table": [
+  {
+   "phase": "A browse",
+   "endpoint": "/api/community",
+   "requests": 414,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 248,
+   "p95_ms": 334,
+   "max_ms": 7263
+  },
+  {
+   "phase": "A browse",
+   "endpoint": "/api/events",
+   "requests": 393,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 207,
+   "p95_ms": 7796,
+   "max_ms": 8454
+  },
+  {
+   "phase": "A browse",
+   "endpoint": "/api/incidents",
+   "requests": 423,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 274,
+   "p95_ms": 395,
+   "max_ms": 7121
+  },
+  {
+   "phase": "A browse",
+   "endpoint": "/api/places",
+   "requests": 407,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 235,
+   "p95_ms": 308,
+   "max_ms": 479
+  },
+  {
+   "phase": "A browse",
+   "endpoint": "/api/resources",
+   "requests": 363,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 234,
+   "p95_ms": 322,
+   "max_ms": 7242
+  },
+  {
+   "phase": "B AI wave of 15",
+   "endpoint": "/api/chat",
+   "requests": 15,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 6426,
+   "p95_ms": 9264,
+   "max_ms": 13533
+  },
+  {
+   "phase": "B AI wave of 15",
+   "endpoint": "/api/comments",
+   "requests": 15,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 1561,
+   "p95_ms": 2952,
+   "max_ms": 4187
+  },
+  {
+   "phase": "B AI wave of 15",
+   "endpoint": "/api/community",
+   "requests": 15,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 54,
+   "p95_ms": 96,
+   "max_ms": 99
+  },
+  {
+   "phase": "B AI wave of 15",
+   "endpoint": "/api/posts",
+   "requests": 15,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 1746,
+   "p95_ms": 2405,
+   "max_ms": 2684
+  },
+  {
+   "phase": "B AI wave of 30",
+   "endpoint": "/api/chat",
+   "requests": 30,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 9255,
+   "p95_ms": 15027,
+   "max_ms": 26446
+  },
+  {
+   "phase": "B AI wave of 30",
+   "endpoint": "/api/comments",
+   "requests": 30,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 2002,
+   "p95_ms": 7579,
+   "max_ms": 27496
+  },
+  {
+   "phase": "B AI wave of 30",
+   "endpoint": "/api/community",
+   "requests": 30,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 118,
+   "p95_ms": 375,
+   "max_ms": 408
+  },
+  {
+   "phase": "B AI wave of 30",
+   "endpoint": "/api/posts",
+   "requests": 30,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 2476,
+   "p95_ms": 8988,
+   "max_ms": 28910
+  },
+  {
+   "phase": "B AI wave of 5",
+   "endpoint": "/api/chat",
+   "requests": 5,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 16051,
+   "p95_ms": 20876,
+   "max_ms": 20876
+  },
+  {
+   "phase": "B AI wave of 5",
+   "endpoint": "/api/comments",
+   "requests": 5,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 1760,
+   "p95_ms": 4621,
+   "max_ms": 4621
+  },
+  {
+   "phase": "B AI wave of 5",
+   "endpoint": "/api/community",
+   "requests": 5,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 25,
+   "p95_ms": 52,
+   "max_ms": 52
+  },
+  {
+   "phase": "B AI wave of 5",
+   "endpoint": "/api/posts",
+   "requests": 5,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 1872,
+   "p95_ms": 3165,
+   "max_ms": 3165
+  },
+  {
+   "phase": "C SOS during AI load",
+   "endpoint": "/api/sos",
+   "requests": 26,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 25,
+   "p95_ms": 92,
+   "max_ms": 236
+  },
+  {
+   "phase": "D abuse: 20 chats from one NetID",
+   "endpoint": "/api/chat",
+   "requests": 20,
+   "server_errors": 0,
+   "rate_limited_429": 0,
+   "p50_ms": 4524,
+   "p95_ms": 8293,
+   "max_ms": 13885
+  }
+ ],
+ "total_requests": 2246,
+ "total_server_errors": 0,
+ "wall_seconds": 203.7
+}

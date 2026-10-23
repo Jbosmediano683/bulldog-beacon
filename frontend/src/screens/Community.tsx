@@ -129,10 +129,19 @@ function PostCard({ post, onChange }: { post: CommunityPost; onChange: (p: Commu
 }
 
 export default function Community() {
-  const { user } = useApp();
+  const { user, composeDraft, clearComposeDraft } = useApp();
   const [show, setShow] = useState<Show>("all");
   const [posts, setPosts] = useState<CommunityPost[] | null>(null);
   const [composing, setComposing] = useState(false);
+  const [draftCategory, setDraftCategory] = useState<string | undefined>(undefined);
+
+  useEffect(() => {  // opened from the chat's "Post an alert" button
+    if (composeDraft) {
+      setDraftCategory(composeDraft.category);
+      setComposing(true);
+      clearComposeDraft();
+    }
+  }, [composeDraft, clearComposeDraft]);
 
   const load = () => api<CommunityPost[]>(`/api/community?show=${show}`).then(setPosts).catch(() => setPosts([]));
   useEffect(() => {
@@ -170,7 +179,8 @@ export default function Community() {
         <button className="fab" onClick={() => setComposing(true)}><IconPlus size={18} /> Post</button>
       )}
       {composing && (
-        <Composer defaultCategory={show === "good" ? "good_news" : undefined} onClose={() => setComposing(false)}
+        <Composer defaultCategory={draftCategory ?? (show === "good" ? "good_news" : undefined)}
+                  onClose={() => { setComposing(false); setDraftCategory(undefined); }}
                   onPublished={() => { window.setTimeout(load, 1500); window.setTimeout(load, 8000); }} />
       )}
     </div>

@@ -25,6 +25,8 @@ def main() -> None:
     args = parser.parse_args()
 
     import config  # loads .env from this folder, then the folder above
+    import events
+    import shuttle
     import uvicorn
     from db import connect
     from seed import seed
@@ -41,6 +43,10 @@ def main() -> None:
     conn.close()
     if args.reset:
         print("Database reset and re-seeded.")
+
+    # Fetch Yale's events calendar and shuttle routes now, not on the first visit.
+    threading.Thread(target=events.refresh, daemon=True).start()
+    threading.Thread(target=shuttle.system, daemon=True).start()
 
     url = f"http://127.0.0.1:{args.port}"
     print(f"\nBulldog Beacon is running at {url}\n  Demo sign-in: NetID hd2026 / password Bulldog#2026\n")

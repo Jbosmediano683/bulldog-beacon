@@ -1,0 +1,10 @@
+{
+  "quotes": [],
+  "notes": [
+    "Tester: my wife, who works night shifts at the Yale Center for Clinical Investigation (YCCI) and parks downtown. She tried Beacon on her phone. I did not time her tasks, and the finding below is in my words, not a direct quote.",
+    "Her finding: the Walk With Me tab only let you start from a fixed list of Yale places, which limits how useful it is, since you usually start from wherever you are. I rebuilt it the same day: “From” now defaults to Current location, using the phone's GPS in New Haven and falling back to the place set at the top of the app anywhere else.",
+    "In the same round, I also made Beacon more all-in-one: the blue emergency phones and the Yale Shuttle now open maps inside the app instead of pointing to other sites (514 phones traced from Yale's PDF map, and the live shuttle with a trip planner), and I removed LiveSafe from the Resources page.",
+    "Limits of this evidence: one tester, no timings, and no direct quotes. A pilot with SOM students and YCCI staff, timing tasks against how people do them today, is the next step (Section 8)."
+  ],
+  "slide": "My wife (YCCI night shifts) tried it on her phone. Her finding: Walk With Me had to start from your current location, not a list. Fixed the same day."
+}

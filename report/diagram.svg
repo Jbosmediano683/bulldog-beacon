@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 540" font-family="'Source Sans 3', 'Segoe UI', Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#6b7280"/>
+    </marker>
+    <marker id="arRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#c8102e"/>
+    </marker>
+  </defs>
+  <rect width="1120" height="540" fill="#ffffff"/>
+
+  <!-- column headings -->
+  <g font-size="11.5" font-weight="700" fill="#00356b" letter-spacing="1.2">
+    <text x="20" y="20">WHAT PEOPLE DO</text>
+    <text x="222" y="20">CODE RULES (0 TOKENS)</text>
+    <text x="412" y="20">GPT-6-LUNA AGENTS</text>
+    <text x="702" y="20">CODE GUARDS</text>
+    <text x="950" y="20">WHAT THEY SEE</text>
+  </g>
+
+  <!-- inputs -->
+  <g fill="#f4f5f6" stroke="#c8cdd3">
+    <rect x="20" y="40" width="175" height="80" rx="8"/>
+    <rect x="20" y="160" width="175" height="90" rx="8"/>
+    <rect x="20" y="285" width="175" height="60" rx="8"/>
+    <rect x="20" y="420" width="175" height="50" rx="8"/>
+  </g>
+  <g fill="#1f2328">
+    <text x="32" y="66" font-weight="700">Post an alert</text>
+    <text x="32" y="84">or a comment</text>
+    <text x="32" y="104" fill="#545b63" font-size="12">Community tab, map</text>
+    <text x="32" y="188" font-weight="700">Ask Beacon</text>
+    <text x="32" y="206">"Is it OK to walk to</text>
+    <text x="32" y="224">my car right now?"</text>
+    <text x="32" y="242" fill="#545b63" font-size="12">Chat</text>
+    <text x="32" y="310" font-weight="700">Hold SOS</text>
+    <text x="32" y="330">+ optional note</text>
+    <text x="32" y="450" font-weight="700">Walk With Me</text>
+  </g>
+
+  <!-- rules -->
+  <rect x="222" y="40" width="160" height="305" rx="8" fill="#00356b"/>
+  <g fill="#ffffff" font-size="12.5">
+    <text x="236" y="66" font-weight="700" font-size="13.5">Before any model</text>
+    <text x="236" y="96">Remove phone, email,</text>
+    <text x="236" y="113">card numbers</text>
+    <text x="236" y="143">Block instruction-</text>
+    <text x="236" y="160">override text</text>
+    <text x="236" y="190">Flag emergencies and</text>
+    <text x="236" y="207">self-harm words: pin</text>
+    <text x="236" y="224">911 / 988 buttons</text>
+    <text x="236" y="254">Rate limits and daily</text>
+    <text x="236" y="271">token caps per NetID</text>
+    <text x="236" y="301">Code decides which</text>
+    <text x="236" y="318">agent runs, and when</text>
+  </g>
+
+  <!-- agents -->
+  <g stroke="#c8cdd3" fill="#ffffff">
+    <rect x="412" y="34" width="262" height="56" rx="8"/>
+    <rect x="412" y="100" width="262" height="48" rx="8"/>
+    <rect x="412" y="160" width="262" height="100" rx="8"/>
+    <rect x="412" y="285" width="262" height="60" rx="8"/>
+  </g>
+  <rect x="412" y="34" width="5" height="56" fill="#6f4fa1"/>
+  <rect x="412" y="100" width="5" height="48" fill="#c48a00"/>
+  <rect x="412" y="160" width="5" height="100" fill="#286dc0"/>
+  <rect x="412" y="285" width="5" height="60" fill="#c8102e"/>
+  <g fill="#1f2328">
+    <text x="426" y="55" font-weight="700">Moderator</text><text x="500" y="55" fill="#545b63" font-size="12">no tools</text>
+    <text x="426" y="74" font-size="12">publish / revise / block / call 911</text>
+    <text x="426" y="120" font-weight="700">Corroborator</text><text x="514" y="120" fill="#545b63" font-size="12">read_reports</text>
+    <text x="426" y="138" font-size="12">only if a real incident is within 300 m</text>
+    <text x="426" y="181" font-weight="700">Safety Concierge</text><text x="540" y="181" fill="#545b63" font-size="12">7 read-only tools</text>
+    <text x="426" y="201" font-size="11.5">find_place · route_check · shuttle_options</text>
+    <text x="426" y="218" font-size="12">incidents_near · yale_events</text>
+    <text x="426" y="235" font-size="12">get_resources · services_open_now</text>
+    <text x="426" y="252" font-size="12" fill="#545b63">proposes buttons; the person decides</text>
+    <text x="426" y="306" font-weight="700">Responder Brief</text><text x="532" y="306" fill="#545b63" font-size="12">no tools</text>
+    <text x="426" y="325" font-size="12">runs after the alert, only if there's a note</text>
+  </g>
+  <rect x="412" y="420" width="262" height="50" rx="8" fill="#fff7e2" stroke="#efd9a2" stroke-dasharray="5 4"/>
+  <text x="426" y="441" font-weight="700" fill="#8a6100">No AI</text>
+  <text x="426" y="459" font-size="12" fill="#8a6100">timer: overdue, then contacts alerted</text>
+
+  <!-- guards -->
+  <rect x="702" y="40" width="210" height="305" rx="8" fill="#ebf2fa" stroke="#c9dbf0"/>
+  <g fill="#00356b" font-size="12.5">
+    <text x="716" y="66" font-weight="700" font-size="13.5">Checks on every answer</text>
+    <text x="716" y="96">Phone numbers must be</text>
+    <text x="716" y="113">verified Yale resources</text>
+    <text x="716" y="143">Cited incidents must be</text>
+    <text x="716" y="160">ones the agent looked up</text>
+    <text x="716" y="190">Buttons validated: real</text>
+    <text x="716" y="207">places, verified numbers</text>
+    <text x="716" y="237">988 support always added</text>
+    <text x="716" y="254">for self-harm language</text>
+    <text x="716" y="284">Model down or over budget:</text>
+    <text x="716" y="301">fail closed (held, never</text>
+    <text x="716" y="318">published unreviewed)</text>
+  </g>
+
+  <!-- outputs -->
+  <g fill="#ffffff" stroke="#00356b">
+    <rect x="950" y="40" width="150" height="80" rx="8"/>
+    <rect x="950" y="160" width="150" height="90" rx="8"/>
+    <rect x="950" y="285" width="150" height="60" rx="8"/>
+    <rect x="950" y="420" width="150" height="50" rx="8"/>
+  </g>
+  <g fill="#1f2328">
+    <text x="962" y="66" font-weight="700">Community board</text>
+    <text x="962" y="84">and map: fair, calm,</text>
+    <text x="962" y="102">confirmed reports</text>
+    <text x="962" y="188" font-weight="700">Answer + buttons</text>
+    <text x="962" y="206">escort, call, walk,</text>
+    <text x="962" y="224">cited incidents,</text>
+    <text x="962" y="242">real Yale events</text>
+    <text x="962" y="310" font-weight="700">Dispatch console</text>
+    <text x="962" y="330">brief for Yale PD</text>
+    <text x="962" y="442" font-weight="700">Trusted contacts</text>
+    <text x="962" y="460">+ dispatch (simulated)</text>
+  </g>
+
+  <!-- arrows: inputs to rules, rules to agents, agents to guards, guards to outputs -->
+  <g stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#ar)">
+    <path d="M195 80 H220"/><path d="M195 205 H220"/><path d="M195 315 H220"/>
+    <path d="M382 62 H410"/><path d="M382 210 H410"/><path d="M382 315 H410"/>
+    <path d="M543 90 V98"/>
+    <path d="M674 62 H700"/><path d="M674 124 H700"/><path d="M674 210 H700"/><path d="M674 315 H700"/>
+    <path d="M912 80 H948"/><path d="M912 205 H948"/><path d="M912 315 H948"/>
+    <path d="M195 445 H410"/><path d="M674 445 H948"/>
+  </g>
+  <!-- SOS goes out instantly, before any model -->
+  <path d="M108 345 V378 H1025 V347" stroke="#c8102e" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arRed)"/>
+  <rect x="470" y="368" width="230" height="20" fill="#ffffff"/>
+  <text x="585" y="382" text-anchor="middle" fill="#c8102e" font-weight="700" font-size="12.5">SOS alert + location: instant, no AI in the path</text>
+
+  <!-- data sources -->
+  <rect x="222" y="492" width="690" height="36" rx="8" fill="#f4f5f6" stroke="#e0e2e5"/>
+  <text x="567" y="515" text-anchor="middle" fill="#545b63" font-size="12.5">Read-only data the agents can see: Beacon database (places, incidents, reports) · verified Yale phone numbers · events.yale.edu</text>
+</svg>
