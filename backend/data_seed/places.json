@@ -1,0 +1,393 @@
+[
+ {
+  "id": 1,
+  "name": "Evans Hall (Yale SOM)",
+  "kind": "building",
+  "aliases": [
+   "evans",
+   "som",
+   "school of management"
+  ],
+  "address": "165 Whitney Avenue, New Haven, CT",
+  "lat": 41.317301,
+  "lng": -72.919875,
+  "osm_match": "165, Whitney Avenue, East Rock, New Haven, South Central Connecticut Planning Region, Connecticut, 06511, United States"
+ },
+ {
+  "id": 2,
+  "name": "Sterling Memorial Library",
+  "kind": "building",
+  "aliases": [
+   "sterling",
+   "sml",
+   "library"
+  ],
+  "address": "120 High Street, New Haven, CT",
+  "lat": 41.311458,
+  "lng": -72.928943,
+  "osm_match": "120, High Street, Chapel Street Historic District, Dixwell, New Haven, Connecticut, 06511, United States"
+ },
+ {
+  "id": 3,
+  "name": "Old Campus (Phelps Gate)",
+  "kind": "building",
+  "aliases": [
+   "old campus",
+   "phelps gate"
+  ],
+  "address": "344 College Street, New Haven, CT",
+  "lat": 41.30844,
+  "lng": -72.928146,
+  "osm_match": "Phelps Hall, 344, College Street, Downtown, Dixwell, New Haven, Connecticut, 06511, United States"
+ },
+ {
+  "id": 4,
+  "name": "Schwarzman Center",
+  "kind": "building",
+  "aliases": [
+   "schwarzman",
+   "commons"
+  ],
+  "address": "168 Grove Street, New Haven, CT",
+  "lat": 41.311596,
+  "lng": -72.925583,
+  "osm_match": "168, Grove Street, Downtown, Dixwell, New Haven, South Central Connecticut Planning Region, Connecticut, 06511, United States"
+ },
+ {
+  "id": 5,
+  "name": "Yale Center for Clinical Investigation (YCCI)",
+  "kind": "building",
+  "aliases": [
+   "ycci",
+   "clinical investigation",
+   "church street south"
+  ],
+  "address": "2 Church Street South, New Haven, CT",
+  "lat": 41.297508,
+  "lng": -72.928378,
+  "osm_match": "2, Church Street South, New Haven, South Central Connecticut Planning Region, Connecticut, 06519, United States"
+ },
+ {
+  "id": 6,
+  "name": "Yale New Haven Hospital",
+  "kind": "medical",
+  "aliases": [
+   "ynhh",
+   "hospital",
+   "york street hospital"
+  ],
+  "address": "20 York Street, New Haven, CT",
+  "lat": 41.304312,
+  "lng": -72.936013,
+  "osm_match": "20, York Street, Dixwell, New Haven, Connecticut, 06519, United States"
+ },
+ {
+  "id": 7,
+  "name": "Sterling Hall of Medicine (Cedar St)",
+  "kind": "building",
+  "aliases": [
+   "shm",
+   "medical school",
+   "school of medicine",
+   "cedar street"
+  ],
+  "address": "333 Cedar Street, New Haven, CT",
+  "lat": 41.303002,
+  "lng": -72.933244,
+  "osm_match": "Harvey Cushing/John Hay Whitney Medical Library, 333, Cedar Street, Dixwell, New Haven, Connecticut, 06510, United States"
+ },
+ {
+  "id": 8,
+  "name": "Yale Health Center",
+  "kind": "medical",
+  "aliases": [
+   "yale health",
+   "lock street",
+   "health center"
+  ],
+  "address": "55 Lock Street, New Haven, CT",
+  "lat": 41.315696,
+  "lng": -72.927807,
+  "osm_match": "55, Lock Street, Dixwell, New Haven, Connecticut, 06511, United States"
+ },
+ {
+  "id": 9,
+  "name": "Yale Police Department",
+  "kind": "safety",
+  "aliases": [
+   "ypd",
+   "yale police",
+   "ashmun"
+  ],
+  "address": "101 Ashmun Street, New Haven, CT",
+  "lat": 41.315996,
+  "lng": -72.928752,
+  "osm_match": "Rose Center, 101, Ashmun Street, Downtown, Dixwell, New Haven, Connecticut, 06511, United States"
+ },
+ {
+  "id": 10,
+  "name": "Union Station",
+  "kind": "transit",
+  "aliases": [
+   "train station",
+   "union station",
+   "metro-north",
+   "amtrak"
+  ],
+  "address": "50 Union Avenue, New Haven, CT",
+  "lat": 41.297523,
+  "lng": -72.926621,
+  "osm_match": "New Haven Union Station, 50, Union Avenue, Long Wharf, New Haven, Connecticut, 06519, United States"
+ },
+ {
+  "id": 11,
+  "name": "Air Rights Garage",
+  "kind": "parking",
+  "aliases": [
+   "air rights",
+   "york street garage"
+  ],
+  "address": "Air Rights Garage, New Haven, CT",
+  "lat": 41.305238,
+  "lng": -72.933545,
+  "osm_match": "Air Rights Garage, 55, York Street, Dixwell, New Haven, Connecticut, 06520, United States"
+ },
+ {
+  "id": 12,
+  "name": "Temple Street Garage",
+  "kind": "parking",
+  "aliases": [
+   "temple garage",
+   "temple street"
+  ],
+  "address": "Temple Street Garage, New Haven, CT",
+  "lat": 41.304111,
+  "lng": -72.92844,
+  "osm_match": "Temple Street Garage, Temple Street, Downtown, Dixwell, New Haven, South Central Connecticut Planning Region, Connecticut, 05610, United States"
+ },
+ {
+  "id": 13,
+  "name": "Payne Whitney Gym",
+  "kind": "building",
+  "aliases": [
+   "pwg",
+   "gym",
+   "payne whitney"
+  ],
+  "address": "70 Tower Parkway, New Haven, CT",
+  "lat": 41.313722,
+  "lng": -72.931086,
+  "osm_match": "Payne Whitney Gymnasium, 70, Tower Parkway, Downtown, Dixwell, New Haven, Connecticut, 06511, United States"
+ },
+ {
+  "id": 14,
+  "name": "Kline Biology Tower",
+  "kind": "building",
+  "aliases": [
+   "kbt",
+   "kline",
+   "science hill"
+  ],
+  "address": "219 Prospect Street, New Haven, CT",
+  "lat": 41.317239,
+  "lng": -72.922549,
+  "osm_match": "Kline Tower, 219, Prospect Street, Prospect Hill Historic District, Dixwell, New Haven, Connecticut, 06511, United States"
+ },
+ {
+  "id": 15,
+  "name": "Yale Law School",
+  "kind": "building",
+  "aliases": [
+   "law school",
+   "sterling law",
+   "wall street"
+  ],
+  "address": "127 Wall Street, New Haven, CT",
+  "lat": 41.312032,
+  "lng": -72.927781,
+  "osm_match": "Yale Law School, 127, Wall Street, Downtown, Dixwell, New Haven, Connecticut, 06511, United States"
+ },
+ {
+  "id": 16,
+  "name": "Humanities Quadrangle (320 York St)",
+  "kind": "building",
+  "aliases": [
+   "hq",
+   "hgs",
+   "hall of graduate studies",
+   "humanities quadrangle"
+  ],
+  "address": "320 York Street, New Haven, CT",
+  "lat": 41.312309,
+  "lng": -72.929127,
+  "osm_match": "Humanities Quadrangle, 320, York Street, Downtown, Dixwell, New Haven, South Central Connecticut Planning Region, Connecticut, 06511, United States"
+ },
+ {
+  "id": 17,
+  "name": "Yale University Art Gallery",
+  "kind": "building",
+  "aliases": [
+   "art gallery",
+   "yuag",
+   "chapel street gallery"
+  ],
+  "address": "1111 Chapel Street, New Haven, CT",
+  "lat": 41.308435,
+  "lng": -72.93088,
+  "osm_match": "Yale University Art Gallery, 1111;1073, Chapel Street, Downtown, Dixwell, New Haven, Connecticut, 06511, United States"
+ },
+ {
+  "id": 18,
+  "name": "Yale Bookstore (Broadway)",
+  "kind": "building",
+  "aliases": [
+   "broadway",
+   "bookstore",
+   "barnes and noble"
+  ],
+  "address": "77 Broadway, New Haven, CT",
+  "lat": 41.311071,
+  "lng": -72.930291,
+  "osm_match": "77, Broadway, Downtown, Dixwell, New Haven, South Central Connecticut Planning Region, Connecticut, 06511, United States"
+ },
+ {
+  "id": 19,
+  "name": "Ingalls Rink",
+  "kind": "building",
+  "aliases": [
+   "ingalls",
+   "the whale",
+   "hockey rink"
+  ],
+  "address": "73 Sachem Street, New Haven, CT",
+  "lat": 41.316811,
+  "lng": -72.925004,
+  "osm_match": "Ingalls Ice Rink, 73, Sachem Street, Dixwell, New Haven, Connecticut, 06511, United States"
+ },
+ {
+  "id": 20,
+  "name": "Grove Street Cemetery",
+  "kind": "landmark",
+  "aliases": [
+   "grove street",
+   "cemetery"
+  ],
+  "address": "227 Grove Street, New Haven, CT",
+  "lat": 41.312626,
+  "lng": -72.927005,
+  "osm_match": "227, Grove Street, Downtown, Dixwell, New Haven, Connecticut, 06511, United States"
+ },
+ {
+  "id": 21,
+  "name": "New Haven Green",
+  "kind": "landmark",
+  "aliases": [
+   "the green",
+   "green",
+   "church street"
+  ],
+  "address": "New Haven Green, New Haven, CT",
+  "lat": 41.308017,
+  "lng": -72.927059,
+  "osm_match": "New Haven Green, Dixwell, New Haven, South Central Connecticut Planning Region, Connecticut, 06510, United States"
+ },
+ {
+  "id": 22,
+  "name": "Shubert Theatre",
+  "kind": "landmark",
+  "aliases": [
+   "shubert",
+   "college street theatre"
+  ],
+  "address": "247 College Street, New Haven, CT",
+  "lat": 41.306368,
+  "lng": -72.928835,
+  "osm_match": "247, College Street, Chapel Street Historic District, Dixwell, New Haven, Connecticut, 06510, United States"
+ },
+ {
+  "id": 23,
+  "name": "Yale Divinity School",
+  "kind": "building",
+  "aliases": [
+   "divinity",
+   "yds",
+   "prospect street"
+  ],
+  "address": "409 Prospect Street, New Haven, CT",
+  "lat": 41.32339,
+  "lng": -72.921307,
+  "osm_match": "Marquand Chapel, 409, Prospect Street, Prospect Hill Historic District, Dixwell, New Haven, Connecticut, 06511, United States"
+ },
+ {
+  "id": 24,
+  "name": "Chapel-York Garage",
+  "kind": "parking",
+  "aliases": [
+   "chapel york",
+   "chapel and york",
+   "chapel street garage"
+  ],
+  "address": "Chapel Street & York Street, New Haven, CT",
+  "lat": 41.307992,
+  "lng": -72.93253,
+  "osm_match": "Chapel-York Garage, York Street, Chapel Street Historic District, Dixwell, New Haven, South Central Connecticut Planning Region, Connecticut, 06520, United States"
+ },
+ {
+  "id": 25,
+  "name": "Yale West Campus",
+  "kind": "building",
+  "aliases": [
+   "west campus",
+   "west haven",
+   "west campus barn",
+   "orange"
+  ],
+  "address": "West Campus Drive, West Haven, CT",
+  "lat": 41.258091,
+  "lng": -72.987218,
+  "osm_match": "West Campus Drive, West Shore, West Haven"
+ },
+ {
+  "id": 26,
+  "name": "Wooster Square",
+  "kind": "neighborhood",
+  "aliases": [
+   "wooster",
+   "wooster st",
+   "wooster square park"
+  ],
+  "address": "Wooster Square, New Haven, CT",
+  "lat": 41.304758,
+  "lng": -72.917775,
+  "osm_match": "Wooster Square, Barnesville, New Haven"
+ },
+ {
+  "id": 27,
+  "name": "East Rock (Orange St & Cottage St)",
+  "kind": "neighborhood",
+  "aliases": [
+   "east rock",
+   "orange street",
+   "cottage street"
+  ],
+  "address": "Orange Street & Cottage Street, New Haven, CT",
+  "lat": 41.319965,
+  "lng": -72.913062,
+  "osm_match": "Cottage Street, Whitney Avenue Historic District, East Rock"
+ },
+ {
+  "id": 28,
+  "name": "Yale Bowl",
+  "kind": "landmark",
+  "aliases": [
+   "the bowl",
+   "football",
+   "westville",
+   "yale bowl"
+  ],
+  "address": "81 Central Avenue, New Haven, CT",
+  "lat": 41.313227,
+  "lng": -72.960485,
+  "osm_match": "Yale Bowl, Chapel Street, Westville, New Haven"
+ }
+]

@@ -1,0 +1,22 @@
+# secrets and local environments
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# the app's database is created and seeded on first run
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# front-end build tooling (the built app in backend/static IS committed)
+frontend/node_modules/
+frontend/dist/
+
+# editor / tool folders
+.claude/
+.vscode/
+.idea/
+*.zip

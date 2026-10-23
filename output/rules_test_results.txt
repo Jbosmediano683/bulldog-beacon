@@ -1,0 +1,65 @@
+Bulldog Beacon offline safety tests: 63/63 passed (scripted model, 0 tokens)
+
+PASS  .env one folder up is found (grader layout)
+PASS  .env in the repo folder wins over the parent
+PASS  PII rule removes a private phone and email
+PASS  PII rule keeps verified Yale numbers
+PASS  injection rule catches 'ignore previous instructions'
+PASS  injection rule catches fake tags
+PASS  injection rule leaves normal posts alone
+PASS  crisis rule catches self-harm language
+PASS  danger rule catches 'someone is following me'
+PASS  output guard removes an unverified phone number
+PASS  output guard keeps verified numbers
+PASS  fence() strips attempts to close our data tags
+PASS  API needs a NetID session
+PASS  NetID format is validated
+PASS  wrong password is rejected
+PASS  members can't open the dispatch console
+PASS  injection post is blocked by the rule layer
+PASS  ...and the model was never called (0 tokens)
+PASS  moderator outage: post is held, not published (fail closed)
+PASS  guard removes a phone number the moderator added
+PASS  guard: 'profiling' flagged but 'publish' becomes 'revise'
+PASS  guard: self-harm post always gets 988 support, even if the model forgets
+PASS  guard: empty published text is blocked
+PASS  mock CAS: first sign-in with a new NetID creates the account
+PASS  post rate limit: 7th post in an hour is refused before any AI call
+PASS  real report never merges into a demo incident
+PASS  corroborator ran only because a real neighbour existed
+PASS  guard: corroborator's made-up incident id is ignored
+PASS  guard: corroborator's made-up phone number is removed
+PASS  guard: invented phone number removed from the chat reply
+PASS  guard: citation to an incident the agent never looked up is removed
+PASS  guard: call button with an unverified number is dropped
+PASS  guard: walk button to a non-existent place is dropped
+PASS  guard: verified call button is kept
+PASS  crisis words pin the 988 button even if the model forgets
+PASS  danger words pin a 911 button first
+PASS  loop protection: a tool-call loop is stopped by UsageLimits
+PASS  ...and the user gets a safe fallback answer
+PASS  model outage: chat answers with emergency numbers instead of failing
+PASS  daily token cap per NetID stops AI calls
+PASS  rate limit: 9th AI call in a minute is refused
+PASS  SOS fires with the AI down (no model in the path)
+PASS  ...and trusted contacts are notified by code
+PASS  brief failure is reported, the SOS stays open
+PASS  dispatcher still sees the SOS and the caller's raw note
+PASS  missed check-in: active -> overdue -> escalated, by code
+PASS  community feed never shows names, only 'You' or an affiliation
+PASS  'I saw this too' toggles on and off
+PASS  you can't confirm or like your own post
+PASS  good news can be liked but not 'confirmed'
+PASS  comment injection is blocked by the rule layer, 0 tokens
+PASS  moderator outage: the comment is held, not posted (fail closed)
+PASS  a blocked comment shows its reason to the author
+PASS  ...and nobody else can see it
+PASS  a friendly comment is published
+PASS  good news stays in the community feed (no map incident)
+PASS  service area includes West Campus and East Rock
+PASS  service area excludes Hartford and the rest of the globe
+PASS  events: something happening now comes first
+PASS  events: starts in 30 min = 'soon'
+PASS  events: gallery-style opening hours rank after real happenings
+PASS  events: a venue with bad coordinates gets no map pin
+PASS  events: virtual and finished events are left out
